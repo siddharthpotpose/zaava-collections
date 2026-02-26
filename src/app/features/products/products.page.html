@@ -1,0 +1,27 @@
+<section class="p-3 rounded-4 card-shadow">
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h2 class="section-title mb-0">Women Collection</h2>
+    <span class="text-muted-small">Dynamic category filtering from admin master data</span>
+  </div>
+
+  <div class="filters mb-3" *ngIf="categories$ | async as categories">
+    <button class="btn btn-sm me-2 mb-2 btn-outline-dark" type="button" (click)="selectCategory(null)">All</button>
+    <button
+      class="btn btn-sm me-2 mb-2 btn-outline-primary"
+      type="button"
+      *ngFor="let category of categories"
+      (click)="selectCategory(category.name)"
+    >
+      {{ category.name }}
+    </button>
+  </div>
+
+  <div class="row g-3" *ngIf="products$ | async as products">
+    <div class="col-12 text-center py-5" *ngIf="products.length === 0">
+      <h5>No products found for this filter.</h5>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" *ngFor="let product of products">
+      <app-product-card [product]="product" (addToCart)="addToCart($event)"></app-product-card>
+    </div>
+  </div>
+</section>

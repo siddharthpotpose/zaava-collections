@@ -1,0 +1,14 @@
+.product-card {
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.product-image-wrap {
+  display: block;
+  background: #fff;
+}
+
+.product-image {
+  height: 220px;
+  object-fit: cover;
+}

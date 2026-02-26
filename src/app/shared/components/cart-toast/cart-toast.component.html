@@ -1,0 +1,18 @@
+<div class="cart-toast-wrap" *ngIf="toast$ | async as toast">
+  <div class="cart-toast-card">
+    <div class="toast-icon">
+      <i class="fa-solid fa-circle-check"></i>
+    </div>
+
+    <div class="toast-copy">
+      <h6 class="mb-1">{{ toast.title }}</h6>
+      <p class="mb-0">{{ toast.message }}</p>
+    </div>
+
+    <a routerLink="/cart" class="toast-cart-link" (click)="dismiss()">View Cart</a>
+
+    <button type="button" class="toast-close-btn" (click)="dismiss()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+</div>

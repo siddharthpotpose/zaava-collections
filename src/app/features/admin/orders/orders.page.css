@@ -1,0 +1,7 @@
+:host {
+  display: block;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #e9f2ff;
+}

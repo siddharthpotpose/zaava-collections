@@ -1,0 +1,61 @@
+<section class="bg-white p-3 rounded-3 card-shadow" *ngIf="orders$ | async as orders">
+  <h2 class="section-title">Orders</h2>
+
+  <div class="accordion" id="ordersAccordion">
+    <div class="accordion-item" *ngFor="let order of orders; let index = index">
+      <h2 class="accordion-header">
+        <button
+          class="accordion-button"
+          type="button"
+          [class.collapsed]="index !== 0"
+          data-bs-toggle="collapse"
+          [attr.data-bs-target]="'#order' + order.id"
+        >
+          <span class="fw-semibold me-3">#{{ order.id }}</span>
+          <span>{{ order.userName }}</span>
+          <span class="ms-auto me-2">{{ order.totalAmount | currency: 'INR' }}</span>
+        </button>
+      </h2>
+
+      <div
+        [id]="'order' + order.id"
+        class="accordion-collapse collapse"
+        [class.show]="index === 0"
+        data-bs-parent="#ordersAccordion"
+      >
+        <div class="accordion-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <p class="mb-1"><strong>Name:</strong> {{ order.userName }}</p>
+              <p class="mb-1"><strong>Email:</strong> {{ order.email }}</p>
+              <p class="mb-1"><strong>Address:</strong> {{ order.address }}</p>
+            </div>
+            <div class="col-md-6">
+              <p class="mb-1"><strong>Order Date:</strong> {{ order.orderDate | date: 'medium' }}</p>
+              <p class="mb-1"><strong>Total Amount:</strong> {{ order.totalAmount | currency: 'INR' }}</p>
+            </div>
+          </div>
+
+          <div class="table-responsive mt-3">
+            <table class="table table-sm mb-0">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Unit Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let product of order.products">
+                  <td>{{ product.productTitle }}</td>
+                  <td>{{ product.quantity }}</td>
+                  <td>{{ product.unitPrice | currency: 'INR' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

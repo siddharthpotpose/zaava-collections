@@ -1,0 +1,7 @@
+.banner-thumb {
+  width: 120px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: 0.45rem;
+  border: 1px solid #e8def5;
+}

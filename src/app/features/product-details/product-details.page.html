@@ -1,0 +1,164 @@
+<section *ngIf="product; else missingProduct" class="p-3 p-lg-4 rounded-4 card-shadow mb-4">
+  <div class="row g-4">
+    <div class="col-12 col-lg-5">
+      <button
+        type="button"
+        class="border-0 bg-transparent p-0 w-100"
+        data-bs-toggle="modal"
+        data-bs-target="#productImageModal"
+        (click)="openImageModal(selectedImage)"
+      >
+        <img [src]="product.images[selectedImage]" [alt]="product.title" class="main-image" />
+      </button>
+
+      <div class="d-flex gap-2 mt-3 flex-wrap">
+        <button
+          type="button"
+          class="thumbnail-btn"
+          *ngFor="let image of product.images; let index = index"
+          [class.active]="selectedImage === index"
+          (click)="selectThumbnail(index)"
+        >
+          <img [src]="image" [alt]="product.title + ' thumbnail ' + (index + 1)" class="thumbnail-image" />
+        </button>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-7">
+      <h2 class="mb-2">{{ product.title }}</h2>
+      <div class="mb-2">
+        <span class="rating-badge me-2"><i class="fa-solid fa-star me-1"></i>{{ product.rating }}</span>
+        <span class="text-muted-small">Brand: {{ product.brand }}</span>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+        <h3 class="mb-0 fw-bold text-success">{{ discountedPrice | currency: 'INR' }}</h3>
+        <span class="text-muted text-decoration-line-through">{{ product.price | currency: 'INR' }}</span>
+        <span class="text-success fw-semibold">{{ product.discountPercentage }}% off</span>
+      </div>
+
+      <p class="text-muted mb-4">{{ product.description }}</p>
+
+      <div class="mb-3">
+        <h6 class="fw-semibold">Size</h6>
+        <div class="d-flex flex-wrap gap-2">
+          <button
+            class="btn btn-sm"
+            *ngFor="let size of product.sizes"
+            [class.btn-primary]="selectedSize === size"
+            [class.btn-outline-primary]="selectedSize !== size"
+            (click)="selectedSize = size"
+            type="button"
+          >
+            {{ size }}
+          </button>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <h6 class="fw-semibold">Quantity</h6>
+        <div class="input-group quantity-group">
+          <button class="btn btn-outline-secondary" type="button" (click)="decrementQuantity()">-</button>
+          <input type="text" class="form-control text-center" [value]="quantity" readonly />
+          <button class="btn btn-outline-secondary" type="button" (click)="incrementQuantity()">+</button>
+        </div>
+      </div>
+
+      <button class="btn btn-add-cart px-4" (click)="addToCart()" type="button">
+        <i class="fa-solid fa-cart-plus me-2"></i>Add to Cart
+      </button>
+      <a routerLink="/cart" class="btn btn-outline-primary px-4 ms-2">Go to Cart</a>
+    </div>
+  </div>
+</section>
+
+<section class="p-3 rounded-4 card-shadow" *ngIf="suggestionSlides.length > 0">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="section-title mb-0">You May Also Like</h3>
+    <span class="text-muted-small">Related picks based on your selection</span>
+  </div>
+
+  <div id="suggestionCarousel" class="carousel slide" data-bs-interval="false">
+    <div class="carousel-inner">
+      <div class="carousel-item" [class.active]="index === 0" *ngFor="let slide of suggestionSlides; let index = index">
+        <div class="row g-3">
+          <div class="col-6 col-md-4 col-xl-3" *ngFor="let suggestion of slide">
+            <a class="suggestion-card" [routerLink]="['/products', suggestion.id]">
+              <img [src]="suggestion.images[0]" [alt]="suggestion.title" class="suggestion-image" />
+              <div class="p-2">
+                <p class="fw-semibold mb-1 text-truncate">{{ suggestion.title }}</p>
+                <p class="mb-0 text-success fw-semibold">{{ suggestion.price | currency: 'INR' }}</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button
+      *ngIf="suggestionSlides.length > 1"
+      class="carousel-control-prev"
+      type="button"
+      data-bs-target="#suggestionCarousel"
+      data-bs-slide="prev"
+    >
+      <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button
+      *ngIf="suggestionSlides.length > 1"
+      class="carousel-control-next"
+      type="button"
+      data-bs-target="#suggestionCarousel"
+      data-bs-slide="next"
+    >
+      <span class="carousel-control-next-icon"></span>
+    </button>
+  </div>
+</section>
+
+<ng-template #missingProduct>
+  <div class="p-4 rounded-4 card-shadow text-center">
+    <h4>Product not found</h4>
+    <a routerLink="/products" class="btn btn-primary mt-2">Back to Products</a>
+  </div>
+</ng-template>
+
+<div class="modal fade" id="productImageModal" tabindex="-1" aria-labelledby="productImageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="productImageModalLabel">{{ product?.title }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-image-wrap">
+          <img
+            *ngIf="product"
+            [src]="product.images[modalImageIndex]"
+            [alt]="'Product image ' + (modalImageIndex + 1)"
+            class="d-block w-100 modal-image"
+          />
+
+          <button class="modal-nav prev" type="button" (click)="previousModalImage()">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button class="modal-nav next" type="button" (click)="nextModalImage()">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <div class="d-flex gap-2 justify-content-center mt-3" *ngIf="product">
+          <button
+            class="modal-thumb-btn"
+            type="button"
+            *ngFor="let image of product.images; let index = index"
+            [class.active]="modalImageIndex === index"
+            (click)="openImageModal(index)"
+          >
+            <img [src]="image" [alt]="'Modal thumb ' + (index + 1)" class="modal-thumb" />
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

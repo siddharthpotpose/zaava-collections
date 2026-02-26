@@ -1,0 +1,131 @@
+.thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 0.45rem;
+  object-fit: cover;
+  border: 1px solid #e5dff1;
+}
+
+.product-modal-dialog {
+  max-width: 1080px;
+}
+
+.product-modal-body {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.compact-panel {
+  border: 1px solid #eadff5;
+  border-radius: 0.85rem;
+  padding: 0.8rem;
+  background: linear-gradient(180deg, #ffffff, #fcf9ff);
+  height: 100%;
+}
+
+.compact-panel-title {
+  font-weight: 600;
+  color: #4c1d95;
+  margin-bottom: 0.65rem;
+}
+
+.compact-panel .admin-form-label {
+  font-size: 0.8rem;
+  margin-bottom: 0.2rem;
+}
+
+.compact-panel .admin-form-control,
+.compact-panel .admin-form-select {
+  padding: 0.42rem 0.58rem;
+  font-size: 0.9rem;
+}
+
+.compact-tips {
+  margin-top: 0.35rem;
+  border-top: 1px dashed #decdf3;
+  padding-top: 0.55rem;
+  font-size: 0.82rem;
+  color: #7a6f91;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.compact-tips i {
+  color: #7c3aed;
+}
+
+.product-modal-footer {
+  border-top: 1px solid #eee4f8;
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+}
+
+@media (max-width: 767.98px) {
+  .product-modal .modal-dialog {
+    margin: 0.75rem auto;
+    width: calc(100vw - 1.5rem);
+    max-width: 560px;
+  }
+
+  .product-modal .modal-content {
+    max-height: calc(100vh - 1.5rem);
+    max-height: calc(100dvh - 1.5rem);
+    border-radius: 0.85rem;
+    border: 1px solid #eadcf6;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-modal .modal-header {
+    flex: 0 0 auto;
+    background: #fdf8ff;
+    border-bottom: 1px solid #eee4f8;
+  }
+
+  .product-modal-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+    padding: 0.62rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .compact-panel {
+    padding: 0.62rem;
+    border-radius: 0.7rem;
+    height: auto;
+  }
+
+  .compact-panel-title {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .compact-panel .admin-form-label {
+    font-size: 0.76rem;
+  }
+
+  .compact-panel .admin-form-control,
+  .compact-panel .admin-form-select {
+    font-size: 0.86rem;
+    padding: 0.38rem 0.52rem;
+  }
+
+  .compact-tips {
+    display: none;
+  }
+
+  .product-modal-footer {
+    flex: 0 0 auto;
+    background: #fff;
+    border-top: 1px solid #eee4f8;
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+  }
+
+  .product-modal-footer .admin-btn-secondary,
+  .product-modal-footer .admin-btn-primary {
+    padding: 0.48rem 0.82rem;
+    font-size: 0.88rem;
+  }
+}

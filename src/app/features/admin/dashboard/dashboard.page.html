@@ -1,0 +1,90 @@
+<section *ngIf="stats$ | async as stats">
+  <h2 class="section-title">Dashboard Overview</h2>
+
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="stat-card products">
+        <i class="fa-solid fa-box-open"></i>
+        <div>
+          <p class="text-muted-small mb-1">Products</p>
+          <h3 class="mb-0">{{ stats.products }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="stat-card categories">
+        <i class="fa-solid fa-layer-group"></i>
+        <div>
+          <p class="text-muted-small mb-1">Categories</p>
+          <h3 class="mb-0">{{ stats.categories }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="stat-card banners">
+        <i class="fa-solid fa-panorama"></i>
+        <div>
+          <p class="text-muted-small mb-1">Banners</p>
+          <h3 class="mb-0">{{ stats.banners }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="stat-card revenue">
+        <i class="fa-solid fa-wallet"></i>
+        <div>
+          <p class="text-muted-small mb-1">Revenue</p>
+          <h3 class="mb-0">{{ stats.revenue | currency: 'INR' }}</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-12 col-xl-7">
+      <div class="admin-card card-shadow">
+        <h5 class="mb-3">Recent Orders</h5>
+        <div class="table-responsive" *ngIf="orders$ | async as orders">
+          <table class="table align-middle mb-0 admin-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let order of orders">
+                <td>#{{ order.id }}</td>
+                <td>{{ order.userName }}</td>
+                <td>{{ order.orderDate | date: 'mediumDate' }}</td>
+                <td>{{ order.totalAmount | currency: 'INR' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-xl-5">
+      <div class="admin-card card-shadow">
+        <h5 class="mb-3">Master Sync Status</h5>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between px-0">
+            <span>Category master connected to product form</span>
+            <span class="badge text-bg-success">Active</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between px-0">
+            <span>Carousel master connected to website hero</span>
+            <span class="badge text-bg-success">Active</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between px-0">
+            <span>User website using full-width responsive layout</span>
+            <span class="badge text-bg-success">Active</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

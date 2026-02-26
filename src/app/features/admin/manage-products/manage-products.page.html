@@ -1,0 +1,152 @@
+<section class="admin-card card-shadow">
+  <div class="admin-section-header">
+    <h2 class="section-title mb-0">Product Master</h2>
+    <button class="admin-btn-primary" (click)="openAddModal()" type="button">
+      <i class="fa-solid fa-plus me-2"></i>Add Product
+    </button>
+  </div>
+
+  <div class="table-responsive" *ngIf="products$ | async as products">
+    <table class="table align-middle mb-0 admin-table">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products">
+          <td><img [src]="product.images[0]" [alt]="product.title" class="thumb" /></td>
+          <td>
+            <div class="fw-semibold">{{ product.title }}</div>
+            <div class="text-muted-small">{{ product.brand }}</div>
+          </td>
+          <td><span class="badge text-bg-light">{{ product.category }}</span></td>
+          <td>{{ product.price | currency: 'INR' }}</td>
+          <td>{{ product.stock }}</td>
+          <td>
+            <div class="admin-actions">
+              <button class="admin-action-btn admin-btn-secondary" type="button" (click)="openEditModal(product)">
+                <i class="fa-solid fa-pen"></i>
+              </button>
+              <button class="admin-action-btn admin-btn-danger" type="button" (click)="deleteProduct(product.id)">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="modal fade admin-modal product-modal" #productModal tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered product-modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ editingProductId ? 'Edit Product' : 'Add Product' }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+        <div class="modal-body product-modal-body">
+          <div class="row g-3">
+            <div class="col-12 col-lg-7">
+              <div class="compact-panel">
+                <h6 class="compact-panel-title">Basic Details</h6>
+                <div class="row g-2">
+                  <div class="col-md-8">
+                    <label class="admin-form-label">Title</label>
+                    <input class="form-control admin-form-control" formControlName="title" />
+                  </div>
+                  <div class="col-md-4">
+                    <label class="admin-form-label">Brand</label>
+                    <input class="form-control admin-form-control" formControlName="brand" />
+                  </div>
+                  <div class="col-md-7">
+                    <label class="admin-form-label">Category</label>
+                    <select class="form-select admin-form-select" formControlName="category">
+                      <option value="" disabled>Select category</option>
+                      <option *ngFor="let category of categories$ | async" [value]="category.name">
+                        {{ category.name }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-5">
+                    <label class="admin-form-label">Sizes</label>
+                    <input
+                      class="form-control admin-form-control"
+                      formControlName="sizes"
+                      placeholder="Free Size or S, M, L"
+                    />
+                  </div>
+                  <div class="col-12">
+                    <label class="admin-form-label">Description</label>
+                    <textarea
+                      class="form-control admin-form-control"
+                      rows="2"
+                      formControlName="description"
+                      placeholder="Short product description"
+                    ></textarea>
+                  </div>
+                  <div class="col-12">
+                    <label class="admin-form-label">Image URLs</label>
+                    <textarea
+                      class="form-control admin-form-control"
+                      rows="2"
+                      formControlName="images"
+                      placeholder="https://... , https://... , https://..."
+                    ></textarea>
+                    <small class="text-muted-small">Add comma-separated image URLs.</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-5">
+              <div class="compact-panel">
+                <h6 class="compact-panel-title">Pricing & Inventory</h6>
+                <div class="row g-2">
+                  <div class="col-6">
+                    <label class="admin-form-label">Price</label>
+                    <input type="number" class="form-control admin-form-control" formControlName="price" />
+                  </div>
+                  <div class="col-6">
+                    <label class="admin-form-label">Discount %</label>
+                    <input type="number" class="form-control admin-form-control" formControlName="discountPercentage" />
+                  </div>
+                  <div class="col-6">
+                    <label class="admin-form-label">Rating</label>
+                    <input
+                      type="number"
+                      class="form-control admin-form-control"
+                      formControlName="rating"
+                      step="0.1"
+                    />
+                  </div>
+                  <div class="col-6">
+                    <label class="admin-form-label">Stock</label>
+                    <input type="number" class="form-control admin-form-control" formControlName="stock" />
+                  </div>
+                  <div class="col-12 compact-tips">
+                    <div><i class="fa-solid fa-circle-info me-2"></i>Keep titles short for clean cards.</div>
+                    <div><i class="fa-solid fa-circle-info me-2"></i>Use at least 3 images for product details.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer product-modal-footer">
+          <button type="button" class="admin-btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="admin-btn-primary">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

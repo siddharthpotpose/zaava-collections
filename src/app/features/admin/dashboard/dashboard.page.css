@@ -1,0 +1,35 @@
+.stat-card {
+  border-radius: 1rem;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(32, 13, 56, 0.18);
+}
+
+.stat-card i {
+  font-size: 1.4rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.stat-card.products {
+  background: linear-gradient(120deg, #4f46e5, #7c3aed);
+}
+
+.stat-card.categories {
+  background: linear-gradient(120deg, #0ea5e9, #2563eb);
+}
+
+.stat-card.banners {
+  background: linear-gradient(120deg, #db2777, #a21caf);
+}
+
+.stat-card.revenue {
+  background: linear-gradient(120deg, #16a34a, #15803d);
+}

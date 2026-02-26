@@ -1,1 +1,253 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --brand-primary: #6d28d9;
+  --brand-secondary: #a30b65;
+  --brand-warning: #fb923c;
+  --brand-success: #15803d;
+  --surface: #f6f4fb;
+  --surface-card: #ffffff;
+  --text-primary: #1f1636;
+  --text-muted: #7a6f91;
+  --card-border: #e5ddf2;
+  --admin-accent: #7c3aed;
+  --admin-accent-dark: #5b21b6;
+  --admin-danger: #dc2626;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background:
+    radial-gradient(circle at 5% -10%, rgba(219, 39, 119, 0.14), transparent 40%),
+    radial-gradient(circle at 95% -10%, rgba(59, 130, 246, 0.12), transparent 45%),
+    var(--surface);
+  color: var(--text-primary);
+}
+
+a {
+  text-decoration: none;
+}
+
+.section-title {
+  font-size: 1.28rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.card-shadow {
+  border: 1px solid var(--card-border);
+  box-shadow: 0 8px 24px rgba(54, 30, 82, 0.08);
+  background: var(--surface-card);
+}
+
+.rating-badge {
+  background: var(--brand-success);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.45rem;
+}
+
+.text-muted-small {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.zen-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.zen-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(67, 29, 111, 0.15);
+}
+
+.admin-card {
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.admin-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.admin-btn-primary {
+  background: linear-gradient(120deg, var(--admin-accent), var(--brand-secondary));
+  border: 0;
+  color: #fff;
+  border-radius: 0.7rem;
+  font-weight: 600;
+  padding: 0.52rem 1rem;
+}
+
+.admin-btn-primary:hover {
+  background: linear-gradient(120deg, var(--admin-accent-dark), #86198f);
+  color: #fff;
+}
+
+.admin-btn-secondary {
+  border: 1px solid #d4c4ef;
+  background: #fff;
+  color: #4c1d95;
+  border-radius: 0.7rem;
+  font-weight: 500;
+}
+
+.admin-btn-secondary:hover {
+  background: #f5efff;
+  color: #4c1d95;
+}
+
+.admin-btn-danger {
+  border: 1px solid #fecaca;
+  background: #fff;
+  color: var(--admin-danger);
+  border-radius: 0.7rem;
+  font-weight: 500;
+}
+
+.admin-btn-danger:hover {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.admin-table {
+  --bs-table-bg: transparent;
+  --bs-table-hover-bg: #f8f5ff;
+}
+
+.admin-table thead th {
+  color: #5b4f73;
+  font-weight: 600;
+  border-bottom-width: 1px;
+  background: #fcfaff;
+}
+
+.admin-table td,
+.admin-table th {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.admin-modal .modal-content {
+  border: 1px solid #e5d8f4;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.admin-modal .modal-header {
+  background: linear-gradient(120deg, #f7f1ff, #fdf4ff);
+}
+
+.admin-modal .modal-title {
+  color: #4c1d95;
+  font-weight: 600;
+}
+
+.admin-form-label {
+  color: #4c1d95;
+  font-weight: 500;
+  margin-bottom: 0.38rem;
+}
+
+.admin-form-control,
+.admin-form-select {
+  border: 1px solid #d9c9ef;
+  border-radius: 0.65rem;
+  background: #fff;
+}
+
+.admin-form-control:focus,
+.admin-form-select:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 0.18rem rgba(139, 92, 246, 0.2);
+}
+
+.admin-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-action-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-add-cart {
+  border: 0;
+  color: #fff !important;
+  font-weight: 600;
+  border-radius: 0.65rem;
+  background: linear-gradient(120deg, #7c3aed 0%, #a21caf 100%);
+  box-shadow: 0 8px 18px rgba(124, 58, 237, 0.28);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.btn-add-cart:hover {
+  color: #fff !important;
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(124, 58, 237, 0.34);
+}
+
+.btn-add-cart:focus-visible {
+  color: #fff !important;
+  box-shadow:
+    0 0 0 0.2rem rgba(167, 139, 250, 0.4),
+    0 10px 22px rgba(124, 58, 237, 0.34);
+}
+
+.btn-add-cart i {
+  color: #fff !important;
+}
+
+body.modal-open .modal-backdrop {
+  background-color: rgba(17, 24, 39, 0.18) !important;
+}
+
+body.modal-open .modal-backdrop.show {
+  opacity: 0.95 !important;
+  backdrop-filter: blur(4px) saturate(1.02) !important;
+  -webkit-backdrop-filter: blur(4px) saturate(1.02) !important;
+}
+
+/* Fallback layer for browsers/rendering paths where backdrop-filter on backdrop is unreliable */
+body.modal-open::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1049;
+  pointer-events: none;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+/* Keep modal experience snappy so blur is removed quickly on close */
+.modal.fade {
+  transition: opacity 0.1s linear !important;
+}
+
+.modal.fade .modal-dialog {
+  transition: transform 0.12s ease-out !important;
+}
+
+.modal-backdrop.fade {
+  transition: opacity 0.08s linear !important;
+}

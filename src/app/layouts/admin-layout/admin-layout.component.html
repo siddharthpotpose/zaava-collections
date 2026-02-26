@@ -1,0 +1,72 @@
+<div class="admin-shell" [class.sidebar-collapsed]="isSidebarCollapsed">
+  <header class="admin-topbar">
+    <button class="icon-btn" type="button" (click)="toggleSidebar()">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <div>
+      <h5 class="mb-0">Zaava Admin Control Center</h5>
+      <small class="opacity-75">Manage categories, products, banners and orders</small>
+    </div>
+    <button class="admin-topbar-btn ms-auto" (click)="logout()">
+      <i class="fa-solid fa-right-from-bracket me-2"></i>Logout
+    </button>
+  </header>
+
+  <div class="admin-body">
+    <aside class="admin-sidebar" [class.mobile-open]="isMobileSidebarOpen">
+      <div class="sidebar-head">
+        <span class="badge text-bg-light">Master Menu</span>
+      </div>
+      <nav class="menu-list">
+        <a
+          routerLink="/admin/dashboard"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="fa-solid fa-chart-line"></i><span>Dashboard</span>
+        </a>
+        <a
+          routerLink="/admin/categories"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="fa-solid fa-layer-group"></i><span>Category Master</span>
+        </a>
+        <a
+          routerLink="/admin/products"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="fa-solid fa-box-open"></i><span>Product Master</span>
+        </a>
+        <a
+          routerLink="/admin/banners"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="fa-solid fa-panorama"></i><span>Carousel Master</span>
+        </a>
+        <a
+          routerLink="/admin/orders"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeMobileSidebar()"
+        >
+          <i class="fa-solid fa-receipt"></i><span>Orders</span>
+        </a>
+      </nav>
+    </aside>
+
+    <div class="sidebar-backdrop" *ngIf="isMobileSidebarOpen" (click)="closeMobileSidebar()"></div>
+
+    <main class="admin-content">
+      <div class="admin-content-stage" [class.route-changing]="isRouteTransitioning">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+</div>
