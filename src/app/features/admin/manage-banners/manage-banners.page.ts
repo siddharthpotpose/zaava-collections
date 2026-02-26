@@ -3,6 +3,7 @@ import { AfterViewInit, Component, ElementRef, ViewChild, inject } from '@angula
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Banner } from '../../../core/models/banner.model';
 import { BannerService } from '../../../core/services/banner.service';
+import { DeleteConfirmModalComponent } from '../../../shared/components/delete-confirm-modal/delete-confirm-modal.component';
 
 declare const bootstrap: {
   Modal: new (element: Element) => {
@@ -14,7 +15,7 @@ declare const bootstrap: {
 @Component({
   selector: 'app-manage-banners-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, DeleteConfirmModalComponent],
   templateUrl: './manage-banners.page.html',
   styleUrl: './manage-banners.page.css'
 })
@@ -26,6 +27,8 @@ export class ManageBannersPage implements AfterViewInit {
 
   private modalInstance?: { show: () => void; hide: () => void };
   editingBannerId: number | null = null;
+  isDeleteConfirmOpen = false;
+  pendingDeleteBannerId: number | null = null;
 
   readonly banners$ = this.bannerService.getBanners();
 
@@ -92,10 +95,21 @@ export class ManageBannersPage implements AfterViewInit {
   }
 
   deleteBanner(id: number): void {
-    if (!confirm('Delete this banner slide?')) {
+    this.pendingDeleteBannerId = id;
+    this.isDeleteConfirmOpen = true;
+  }
+
+  cancelDeleteBanner(): void {
+    this.pendingDeleteBannerId = null;
+    this.isDeleteConfirmOpen = false;
+  }
+
+  confirmDeleteBanner(): void {
+    if (this.pendingDeleteBannerId === null) {
       return;
     }
 
-    this.bannerService.deleteBanner(id);
+    this.bannerService.deleteBanner(this.pendingDeleteBannerId);
+    this.cancelDeleteBanner();
   }
 }

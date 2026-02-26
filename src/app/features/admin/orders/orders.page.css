@@ -5,3 +5,15 @@
 .accordion-button:not(.collapsed) {
   background-color: #e9f2ff;
 }
+
+.btn-outline-warning.active {
+  color: #fff;
+  background-color: #f59e0b;
+  border-color: #f59e0b;
+}
+
+.btn-outline-success.active {
+  color: #fff;
+  background-color: #16a34a;
+  border-color: #16a34a;
+}

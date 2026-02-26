@@ -5,6 +5,7 @@ import { map } from 'rxjs';
 import { Product } from '../../../core/models/product.model';
 import { CategoryService } from '../../../core/services/category.service';
 import { ProductService } from '../../../core/services/product.service';
+import { DeleteConfirmModalComponent } from '../../../shared/components/delete-confirm-modal/delete-confirm-modal.component';
 
 declare const bootstrap: {
   Modal: new (element: Element) => {
@@ -16,7 +17,7 @@ declare const bootstrap: {
 @Component({
   selector: 'app-manage-products-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CurrencyPipe],
+  imports: [CommonModule, ReactiveFormsModule, CurrencyPipe, DeleteConfirmModalComponent],
   templateUrl: './manage-products.page.html',
   styleUrl: './manage-products.page.css'
 })
@@ -29,6 +30,8 @@ export class ManageProductsPage implements AfterViewInit {
 
   private modalInstance?: { show: () => void; hide: () => void };
   editingProductId: number | null = null;
+  isDeleteConfirmOpen = false;
+  pendingDeleteProductId: number | null = null;
 
   readonly products$ = this.productService.getProducts();
   readonly categories$ = this.categoryService.getCategories().pipe(
@@ -130,11 +133,22 @@ export class ManageProductsPage implements AfterViewInit {
   }
 
   deleteProduct(id: number): void {
-    if (!confirm('Delete this product?')) {
+    this.pendingDeleteProductId = id;
+    this.isDeleteConfirmOpen = true;
+  }
+
+  cancelDeleteProduct(): void {
+    this.pendingDeleteProductId = null;
+    this.isDeleteConfirmOpen = false;
+  }
+
+  confirmDeleteProduct(): void {
+    if (this.pendingDeleteProductId === null) {
       return;
     }
 
-    this.productService.deleteProduct(id);
+    this.productService.deleteProduct(this.pendingDeleteProductId);
+    this.cancelDeleteProduct();
   }
 
   private generateProductId(): number {

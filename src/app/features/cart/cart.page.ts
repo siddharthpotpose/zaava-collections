@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { CartItem } from '../../core/models/product.model';
 import { CartService } from '../../core/services/cart.service';
+import { OrderService } from '../../core/services/order.service';
 
 @Component({
   selector: 'app-cart-page',
@@ -16,6 +17,7 @@ import { CartService } from '../../core/services/cart.service';
 })
 export class CartPage {
   private readonly cartService = inject(CartService);
+  private readonly orderService = inject(OrderService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly whatsappNumber = '918485896373';
 
@@ -84,7 +86,8 @@ export class CartPage {
       return;
     }
 
-    const orderMessage = this.buildWhatsAppMessage();
+    const orderId = this.orderService.getNextOrderId();
+    const orderMessage = this.buildWhatsAppMessage(orderId);
     const url = `https://wa.me/${this.whatsappNumber}?text=${encodeURIComponent(orderMessage)}`;
     const newWindow = window.open(url, '_blank');
 
@@ -92,6 +95,26 @@ export class CartPage {
       this.orderError = 'Please allow popups to continue on WhatsApp.';
       return;
     }
+
+    this.orderService.createOrder(
+      {
+        userName: this.customerDetails.name,
+        phone: this.customerDetails.phone,
+        email: this.customerDetails.email,
+        address: this.customerDetails.address,
+        city: this.customerDetails.city,
+        note: this.customerDetails.note,
+        products: this.cartItemsSnapshot.map((item) => ({
+          productTitle: item.product.title,
+          quantity: item.quantity,
+          unitPrice: item.product.price,
+          selectedSize: item.selectedSize || 'Standard',
+          image: item.product.images[0]
+        })),
+        totalAmount: this.totalAmountSnapshot
+      },
+      orderId
+    );
 
     this.orderError = '';
     this.isOrderPlaced = true;
@@ -108,10 +131,10 @@ export class CartPage {
     );
   }
 
-  private buildWhatsAppMessage(): string {
-    const orderId = `ZAAVA-${Date.now()}`;
+  private buildWhatsAppMessage(orderId: number): string {
+    const formattedOrderId = `ZAAVA-${orderId}`;
     const customerBlock = [
-      `Order ID: ${orderId}`,
+      `Order ID: ${formattedOrderId}`,
       `Customer Name: ${this.customerDetails.name}`,
       `Phone: ${this.customerDetails.phone}`,
       `Email: ${this.customerDetails.email || 'Not provided'}`,

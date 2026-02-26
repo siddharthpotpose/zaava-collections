@@ -1,0 +1,48 @@
+.delete-confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  background: rgba(20, 15, 34, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.delete-confirm-modal {
+  width: min(360px, 100%);
+  border: 1px solid #e6d9f6;
+  border-radius: 0.85rem;
+  background: #fff;
+  box-shadow: 0 20px 40px rgba(36, 17, 58, 0.25);
+  overflow: hidden;
+}
+
+.delete-confirm-header {
+  padding: 0.72rem 0.85rem;
+  border-bottom: 1px solid #efe6fb;
+  background: linear-gradient(120deg, #faf5ff, #fdf2f8);
+}
+
+.delete-confirm-header h6 {
+  color: #5b21b6;
+  font-weight: 700;
+}
+
+.delete-confirm-body {
+  padding: 0.85rem;
+  color: #4c3a6c;
+  font-size: 0.9rem;
+}
+
+.delete-confirm-actions {
+  padding: 0.75rem 0.85rem 0.85rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.compact-btn {
+  padding: 0.28rem 0.8rem;
+  min-width: 66px;
+}

@@ -150,3 +150,11 @@
     </div>
   </div>
 </div>
+
+<app-delete-confirm-modal
+  [isOpen]="isDeleteConfirmOpen"
+  title="Delete Product"
+  message="Delete this record?"
+  (cancelled)="cancelDeleteProduct()"
+  (confirmed)="confirmDeleteProduct()"
+></app-delete-confirm-modal>

@@ -199,7 +199,7 @@ Defined in: `src/app/app.routes.ts`
 - Category dropdown from category master
 
 5. Carousel Master (`features/admin/manage-banners`)
-- Add/Edit/Delete hero slides
+- Add/Edit/Delete hero slides 
 
 6. Orders (`features/admin/orders`)
 - Static order details and accordion view

@@ -3,6 +3,7 @@ import { AfterViewInit, Component, ElementRef, ViewChild, inject } from '@angula
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Category } from '../../../core/models/category.model';
 import { CategoryService } from '../../../core/services/category.service';
+import { DeleteConfirmModalComponent } from '../../../shared/components/delete-confirm-modal/delete-confirm-modal.component';
 
 declare const bootstrap: {
   Modal: new (element: Element) => {
@@ -14,7 +15,7 @@ declare const bootstrap: {
 @Component({
   selector: 'app-manage-categories-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, DeleteConfirmModalComponent],
   templateUrl: './manage-categories.page.html',
   styleUrl: './manage-categories.page.css'
 })
@@ -27,6 +28,8 @@ export class ManageCategoriesPage implements AfterViewInit {
   private modalInstance?: { show: () => void; hide: () => void };
   editingCategoryId: number | null = null;
   editingCategoryName = '';
+  isDeleteConfirmOpen = false;
+  pendingDeleteCategoryId: number | null = null;
 
   readonly categories$ = this.categoryService.getCategories();
 
@@ -101,11 +104,22 @@ export class ManageCategoriesPage implements AfterViewInit {
   }
 
   deleteCategory(id: number): void {
-    if (!confirm('Delete this category?')) {
+    this.pendingDeleteCategoryId = id;
+    this.isDeleteConfirmOpen = true;
+  }
+
+  cancelDeleteCategory(): void {
+    this.pendingDeleteCategoryId = null;
+    this.isDeleteConfirmOpen = false;
+  }
+
+  confirmDeleteCategory(): void {
+    if (this.pendingDeleteCategoryId === null) {
       return;
     }
 
-    this.categoryService.deleteCategory(id);
+    this.categoryService.deleteCategory(this.pendingDeleteCategoryId);
+    this.cancelDeleteCategory();
   }
 
   shouldHideParentOption(name: string): boolean {

@@ -13,6 +13,9 @@
         >
           <span class="fw-semibold me-3">#{{ order.id }}</span>
           <span>{{ order.userName }}</span>
+          <span class="badge ms-2" [class.text-bg-warning]="order.status === 'Pending'" [class.text-bg-success]="order.status === 'Delivered'">
+            {{ order.status }}
+          </span>
           <span class="ms-auto me-2">{{ order.totalAmount | currency: 'INR' }}</span>
         </button>
       </h2>
@@ -27,12 +30,34 @@
           <div class="row g-3">
             <div class="col-md-6">
               <p class="mb-1"><strong>Name:</strong> {{ order.userName }}</p>
+              <p class="mb-1"><strong>Phone:</strong> {{ order.phone }}</p>
               <p class="mb-1"><strong>Email:</strong> {{ order.email }}</p>
               <p class="mb-1"><strong>Address:</strong> {{ order.address }}</p>
+              <p class="mb-1"><strong>City:</strong> {{ order.city || 'Not provided' }}</p>
+              <p class="mb-0"><strong>Note:</strong> {{ order.note || 'No note' }}</p>
             </div>
             <div class="col-md-6">
               <p class="mb-1"><strong>Order Date:</strong> {{ order.orderDate | date: 'medium' }}</p>
               <p class="mb-1"><strong>Total Amount:</strong> {{ order.totalAmount | currency: 'INR' }}</p>
+              <div class="d-flex align-items-center gap-2 mt-2">
+                <span class="text-muted-small">Status:</span>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-warning"
+                  [class.active]="order.status === 'Pending'"
+                  (click)="updateOrderStatus(order.id, 'Pending')"
+                >
+                  Pending
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-success"
+                  [class.active]="order.status === 'Delivered'"
+                  (click)="updateOrderStatus(order.id, 'Delivered')"
+                >
+                  Delivered
+                </button>
+              </div>
             </div>
           </div>
 
@@ -41,6 +66,7 @@
               <thead>
                 <tr>
                   <th>Product</th>
+                  <th>Size</th>
                   <th>Qty</th>
                   <th>Unit Price</th>
                 </tr>
@@ -48,6 +74,7 @@
               <tbody>
                 <tr *ngFor="let product of order.products">
                   <td>{{ product.productTitle }}</td>
+                  <td>{{ product.selectedSize || 'Standard' }}</td>
                   <td>{{ product.quantity }}</td>
                   <td>{{ product.unitPrice | currency: 'INR' }}</td>
                 </tr>

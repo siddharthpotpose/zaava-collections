@@ -84,6 +84,13 @@ export const routes: Routes = [
           import('./features/admin/manage-banners/manage-banners.routes').then((m) => m.MANAGE_BANNERS_ROUTES)
       },
       {
+        path: 'advertisements',
+        loadChildren: () =>
+          import('./features/admin/manage-advertisements/manage-advertisements.routes').then(
+            (m) => m.MANAGE_ADVERTISEMENTS_ROUTES
+          )
+      },
+      {
         path: 'orders',
         loadChildren: () => import('./features/admin/orders/orders.routes').then((m) => m.ORDERS_ROUTES)
       }

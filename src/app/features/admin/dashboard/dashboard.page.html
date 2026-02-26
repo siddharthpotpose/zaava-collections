@@ -2,7 +2,7 @@
   <h2 class="section-title">Dashboard Overview</h2>
 
   <div class="row g-3 mb-4">
-    <div class="col-12 col-md-6 col-xl-3">
+    <div class="col-12 col-md-6 col-xl-4 col-xxl-2">
       <div class="stat-card products">
         <i class="fa-solid fa-box-open"></i>
         <div>
@@ -11,7 +11,7 @@
         </div>
       </div>
     </div>
-    <div class="col-12 col-md-6 col-xl-3">
+    <div class="col-12 col-md-6 col-xl-4 col-xxl-2">
       <div class="stat-card categories">
         <i class="fa-solid fa-layer-group"></i>
         <div>
@@ -20,7 +20,7 @@
         </div>
       </div>
     </div>
-    <div class="col-12 col-md-6 col-xl-3">
+    <div class="col-12 col-md-6 col-xl-4 col-xxl-2">
       <div class="stat-card banners">
         <i class="fa-solid fa-panorama"></i>
         <div>
@@ -29,7 +29,16 @@
         </div>
       </div>
     </div>
-    <div class="col-12 col-md-6 col-xl-3">
+    <div class="col-12 col-md-6 col-xl-6 col-xxl-3">
+      <div class="stat-card advertisements">
+        <i class="fa-solid fa-bullhorn"></i>
+        <div>
+          <p class="text-muted-small mb-1">Advertisements</p>
+          <h3 class="mb-0">{{ stats.advertisements }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-6 col-xxl-3">
       <div class="stat-card revenue">
         <i class="fa-solid fa-wallet"></i>
         <div>
@@ -77,6 +86,10 @@
           </li>
           <li class="list-group-item d-flex justify-content-between px-0">
             <span>Carousel master connected to website hero</span>
+            <span class="badge text-bg-success">Active</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between px-0">
+            <span>Advertisement master connected to website popup</span>
             <span class="badge text-bg-success">Active</span>
           </li>
           <li class="list-group-item d-flex justify-content-between px-0">

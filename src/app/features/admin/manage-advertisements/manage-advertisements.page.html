@@ -1,0 +1,255 @@
+<section class="admin-card card-shadow">
+  <div class="admin-section-header">
+    <h2 class="section-title mb-0">Advertisement Master</h2>
+    <button class="admin-btn-primary" type="button" (click)="openAddModal()">
+      <i class="fa-solid fa-plus me-2"></i>Add Advertisement
+    </button>
+  </div>
+
+  <div *ngIf="advertisements$ | async as advertisements">
+    <div class="ad-master-grid" *ngIf="advertisements.length > 0; else emptyState">
+      <article class="ad-entry-card" *ngFor="let advertisement of advertisements">
+        <div class="ad-entry-media">
+          <img
+            [src]="advertisement.image"
+            [alt]="advertisement.title"
+            class="ad-thumb"
+            [class.vertical]="advertisement.layout === 'vertical'"
+          />
+        </div>
+
+        <div class="ad-entry-main">
+          <div class="ad-entry-top">
+            <div>
+              <h6 class="ad-entry-title mb-1">{{ advertisement.title }}</h6>
+              <p class="ad-entry-subtext mb-0">{{ advertisement.subtext }}</p>
+            </div>
+            <span class="badge" [ngClass]="getStatusClass(advertisement)">
+              {{ getStatus(advertisement) }}
+            </span>
+          </div>
+
+          <div class="ad-entry-meta">
+            <span><strong>Layout:</strong> {{ advertisement.layout | titlecase }}</span>
+            <span><strong>Start:</strong> {{ advertisement.startDate }}</span>
+            <span><strong>End:</strong> {{ advertisement.endDate }}</span>
+          </div>
+
+          <div class="ad-entry-actions">
+            <button class="admin-action-btn admin-btn-secondary" type="button" (click)="openEditModal(advertisement)">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+            <button class="admin-action-btn admin-btn-danger" type="button" (click)="deleteAdvertisement(advertisement.id)">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<ng-template #emptyState>
+  <div class="empty-state">
+    No advertisements added yet. Create one to show popup ads on the website.
+  </div>
+</ng-template>
+
+<div class="modal fade admin-modal advertisement-modal" #advertisementModal tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable advertisement-modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ editingAdvertisementId ? 'Edit Advertisement' : 'Add Advertisement' }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+        <div class="modal-body advertisement-modal-body">
+          <div class="row g-3">
+            <div class="col-12 col-lg-5">
+              <div class="ad-form-panel">
+                <div class="row g-2">
+                  <div class="col-12 col-md-6">
+                    <label class="admin-form-label">Popup Type</label>
+                    <select
+                      class="form-select admin-form-select"
+                      formControlName="layout"
+                      [class.is-invalid]="showFieldError(form.controls.layout)"
+                    >
+                      <option value="horizontal">Horizontal</option>
+                      <option value="vertical">Vertical</option>
+                    </select>
+                    <small class="field-error text-danger" *ngIf="hasFieldError(form.controls.layout, 'required')">
+                      Popup type is required.
+                    </small>
+                  </div>
+
+                  <div class="col-12 col-md-6 justify-content-center form-check form-switch form-switch-wrap">
+                    <input class="form-check-input" type="checkbox" formControlName="enabled" id="adEnabledToggle" />
+                    <label class="form-check-label" for="adEnabledToggle">Enabled</label>
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <label class="admin-form-label">Heading</label>
+                    <input
+                      class="form-control admin-form-control"
+                      formControlName="title"
+                      placeholder="Festival Sale 2026"
+                      [class.is-invalid]="showFieldError(form.controls.title)"
+                      (blur)="formatHeadingFromInput()"
+                    />
+                    <small class="field-error text-danger" *ngIf="hasFieldError(form.controls.title, 'required')">
+                      Heading is required.
+                    </small>
+                    <small class="field-error text-danger" *ngIf="hasFieldError(form.controls.title, 'maxlength')">
+                      Heading must be 80 characters or less.
+                    </small>
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <label class="admin-form-label">Subtext</label>
+                    <textarea
+                      class="form-control admin-form-control"
+                      rows="1"
+                      formControlName="subtext"
+                      placeholder="Limited-time offer details..."
+                      [class.is-invalid]="showFieldError(form.controls.subtext)"
+                    ></textarea>
+                    <small class="text-muted-small">Maximum 70 words.</small>
+                    <small class="field-error text-danger" *ngIf="hasFieldError(form.controls.subtext, 'required')">
+                      Subtext is required.
+                    </small>
+                    <small class="field-error text-danger" *ngIf="hasFieldError(form.controls.subtext, 'maxWords')">
+                      Subtext exceeds 70 words.
+                    </small>
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <label class="admin-form-label">Start Date</label>
+                    <input
+                      class="form-control admin-form-control"
+                      type="date"
+                      formControlName="startDate"
+                      [class.is-invalid]="showFieldError(form.controls.startDate)"
+                    />
+                    <small class="field-error text-danger" *ngIf="hasFieldError(form.controls.startDate, 'required')">
+                      Start date is required.
+                    </small>
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <label class="admin-form-label">End Date</label>
+                    <input
+                      class="form-control admin-form-control"
+                      type="date"
+                      formControlName="endDate"
+                      [min]="form.controls.startDate.value"
+                      [class.is-invalid]="showFieldError(form.controls.endDate)"
+                    />
+                    <small class="field-error text-danger" *ngIf="hasFieldError(form.controls.endDate, 'required')">
+                      End date is required.
+                    </small>
+                    <small class="field-error text-danger" *ngIf="hasFieldError(form.controls.endDate, 'dateRange')">
+                      End date must be on or after start date.
+                    </small>
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <label class="admin-form-label">Upload Image</label>
+                    <input
+                      #imageInput
+                      class="form-control admin-form-control"
+                      type="file"
+                      accept="image/*"
+                      (change)="onImageSelected($event)"
+                      [class.is-invalid]="hasFieldError(form.controls.image, 'required')"
+                    />
+                    <div class="upload-guidance text-muted-small">
+                      <div>1. Horizontal: 1200 x 700 px</div>
+                      <div>2. Vertical: 900 x 1200 px</div>
+                      <div>
+                        3. Selected:
+                        {{ form.controls.layout.value === 'vertical' ? 'Vertical (3:4)' : 'Horizontal (16:9 to 3:2)' }}
+                      </div>
+                    </div>
+                    <div class="selected-image-row" *ngIf="selectedImageName || form.controls.image.value">
+                      <small class="text-muted-small">{{ selectedImageName || 'Image selected' }}</small>
+                      <button type="button" class="btn btn-sm admin-btn-danger" (click)="removeSelectedImage()">
+                        Remove
+                      </button>
+                    </div>
+                    <small class="field-error text-danger" *ngIf="hasFieldError(form.controls.image, 'required')">
+                      Image is required. Upload an image or add image URL.
+                    </small>
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <label class="admin-form-label">Image Source</label>
+                    <input
+                      class="form-control admin-form-control"
+                      formControlName="image"
+                      placeholder="https://..."
+                      [class.is-invalid]="hasFieldError(form.controls.image, 'required')"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-7">
+              <div class="ad-preview-panel">
+                <div class="preview-panel-head">
+                  <h6 class="mb-0">Live Preview</h6>
+                  <span class="badge text-bg-light">{{ (form.controls.layout.value || 'horizontal') | titlecase }}</span>
+                </div>
+
+                <div class="preview-canvas">
+                  <article class="ad-preview-card" [class.vertical]="form.controls.layout.value === 'vertical'">
+                    <div class="ad-preview-image-wrap">
+                      <img
+                        *ngIf="form.controls.image.value; else previewImageFallback"
+                        [src]="form.controls.image.value"
+                        [alt]="form.controls.title.value || 'Advertisement preview'"
+                      />
+                      <ng-template #previewImageFallback>
+                        <div class="ad-image-fallback">
+                          <i class="fa-regular fa-image"></i>
+                          <span>Image preview</span>
+                        </div>
+                      </ng-template>
+                    </div>
+
+                    <div class="ad-preview-content">
+                      <div class="ad-preview-title">
+                        {{ form.controls.title.value || 'Your advertisement heading' }}
+                      </div>
+                      <p class="ad-preview-subtext">
+                        {{ form.controls.subtext.value || 'Subtext will appear here while typing in the form.' }}
+                      </p>
+                      <small class="text-muted-small">
+                        {{ form.controls.startDate.value || 'Start date' }} to {{ form.controls.endDate.value || 'End date' }}
+                      </small>
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="admin-btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="admin-btn-primary">Save Advertisement</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<app-delete-confirm-modal
+  [isOpen]="isDeleteConfirmOpen"
+  title="Delete Advertisement"
+  message="Delete this record?"
+  (cancelled)="cancelDeleteAdvertisement()"
+  (confirmed)="confirmDeleteAdvertisement()"
+></app-delete-confirm-modal>

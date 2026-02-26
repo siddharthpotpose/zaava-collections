@@ -30,6 +30,10 @@
   background: linear-gradient(120deg, #db2777, #a21caf);
 }
 
+.stat-card.advertisements {
+  background: linear-gradient(120deg, #ea580c, #f59e0b);
+}
+
 .stat-card.revenue {
   background: linear-gradient(120deg, #16a34a, #15803d);
 }

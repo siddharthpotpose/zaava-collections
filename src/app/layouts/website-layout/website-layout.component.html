@@ -4,7 +4,7 @@
       <a class="navbar-brand text-white d-flex align-items-center" routerLink="/">
         <img src="/zaava-logo.svg" alt="Zaava Collection" class="website-brand-logo" />
         <span>
-          <strong>Zaava</strong>
+          <strong>Zaava Collection</strong>
           <small class="d-block opacity-75">Women Fashion Studio</small>
         </span>
       </a>
@@ -81,6 +81,28 @@
   </main>
 
   <app-cart-toast />
+
+  <div
+    class="ad-popup-backdrop"
+    *ngIf="isAdvertisementVisible && activeAdvertisement"
+    (click)="closeAdvertisementPopup()"
+  >
+    <article class="ad-popup-modal" [ngClass]="activeAdvertisement.layout" (click)="stopPropagation($event)">
+      <button class="ad-close-btn" type="button" (click)="closeAdvertisementPopup()" aria-label="Close advertisement">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="ad-media">
+        <img [src]="activeAdvertisement.image" [alt]="activeAdvertisement.title" />
+      </div>
+
+      <div class="ad-content">
+        <span class="ad-tag">{{ activeAdvertisement.layout | titlecase }} Campaign</span>
+        <h3>{{ activeAdvertisement.title }}</h3>
+        <p>{{ activeAdvertisement.subtext }}</p>
+      </div>
+    </article>
+  </div>
 
   <footer class="site-footer px-3 px-lg-4">
     <div class="footer-main pt-4 pb-3">

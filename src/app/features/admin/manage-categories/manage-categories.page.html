@@ -103,3 +103,11 @@
     </div>
   </div>
 </div>
+
+<app-delete-confirm-modal
+  [isOpen]="isDeleteConfirmOpen"
+  title="Delete Category"
+  message="Delete this record?"
+  (cancelled)="cancelDeleteCategory()"
+  (confirmed)="confirmDeleteCategory()"
+></app-delete-confirm-modal>

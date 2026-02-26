@@ -85,3 +85,11 @@
     </div>
   </div>
 </div>
+
+<app-delete-confirm-modal
+  [isOpen]="isDeleteConfirmOpen"
+  title="Delete Slide"
+  message="Delete this record?"
+  (cancelled)="cancelDeleteBanner()"
+  (confirmed)="confirmDeleteBanner()"
+></app-delete-confirm-modal>
