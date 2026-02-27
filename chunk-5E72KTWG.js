@@ -1,0 +1,1 @@
+var c={production:!1,apiUrl:"https://corsproxy.io/?https://freeapi.miniprojectideas.com/api/BigBasket"};var t=class{static GetAllProducts="GetAllProducts";static CreateProduct="CreateProduct";static UpdateProduct="UpdateProduct";static DeleteProductById="DeleteProductById";static GetAllCategory="GetAllCategory"};export{c as a,t as b};
