@@ -2,10 +2,20 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { CATEGORIES } from '../data/categories.data';
 import { Category } from '../models/category.model';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environment/environment';
+import { apiName } from '../apis/apiName';
 
 @Injectable({ providedIn: 'root' })
 export class CategoryService {
   private readonly categoriesSubject = new BehaviorSubject<Category[]>([...CATEGORIES]);
+
+  constructor(private http: HttpClient){}
+
+
+  getCategory(){
+    return this.http.get(`${environment.apiUrl}/${apiName.GetAllCategory}`)
+  }
 
   getCategories(): Observable<Category[]> {
     return this.categoriesSubject.asObservable();

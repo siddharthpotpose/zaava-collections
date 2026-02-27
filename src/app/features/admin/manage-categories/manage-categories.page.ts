@@ -38,7 +38,6 @@ export class ManageCategoriesPage implements AfterViewInit {
     slug: [''],
     icon: ['fa-tag', [Validators.required]],
     image: ['', [Validators.required]],
-    parentCategory: [''],
     featured: [true]
   });
 
@@ -56,7 +55,6 @@ export class ManageCategoriesPage implements AfterViewInit {
       slug: '',
       icon: 'fa-tag',
       image: '',
-      parentCategory: '',
       featured: true
     });
     this.modalInstance?.show();
@@ -70,7 +68,6 @@ export class ManageCategoriesPage implements AfterViewInit {
       slug: category.slug,
       icon: category.icon,
       image: category.image,
-      parentCategory: category.parentCategory ?? '',
       featured: category.featured ?? true
     });
     this.modalInstance?.show();
@@ -90,7 +87,6 @@ export class ManageCategoriesPage implements AfterViewInit {
       slug,
       icon: this.form.value.icon ?? 'fa-tag',
       image: this.form.value.image ?? '',
-      parentCategory: this.form.value.parentCategory || undefined,
       featured: this.form.value.featured ?? true
     };
 

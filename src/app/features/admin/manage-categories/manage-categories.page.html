@@ -12,7 +12,7 @@
         <tr>
           <th>Category</th>
           <th>Slug</th>
-          <th>Parent</th>
+          <!-- <th>Parent</th> -->
           <th>Featured</th>
           <th>Actions</th>
         </tr>
@@ -26,7 +26,7 @@
             </div>
           </td>
           <td>{{ category.slug }}</td>
-          <td>{{ category.parentCategory || '-' }}</td>
+          <!-- <td>{{ category.parentCategory || '-' }}</td> -->
           <td>
             <span class="badge" [class.text-bg-success]="category.featured" [class.text-bg-secondary]="!category.featured">
               {{ category.featured ? 'Yes' : 'No' }}
@@ -71,7 +71,7 @@
               <label class="admin-form-label">Icon (FontAwesome class)</label>
               <input class="form-control admin-form-control" formControlName="icon" placeholder="fa-gem" />
             </div>
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
               <label class="admin-form-label">Parent Category</label>
               <select class="form-select admin-form-select" formControlName="parentCategory">
                 <option value="">None</option>
@@ -83,8 +83,8 @@
                   {{ category.name }}
                 </option>
               </select>
-            </div>
-            <div class="col-12">
+            </div> -->
+            <div class="col-6">
               <label class="admin-form-label">Category Image URL</label>
               <input class="form-control admin-form-control" formControlName="image" />
             </div>

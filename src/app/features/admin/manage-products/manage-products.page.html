@@ -6,39 +6,52 @@
     </button>
   </div>
 
-  <div class="table-responsive" *ngIf="products$ | async as products">
+  <div class="table-responsive" >
     <table class="table align-middle mb-0 admin-table">
       <thead>
         <tr>
+          <th>#</th>
           <th>Image</th>
-          <th>Title</th>
-          <th>Category</th>
+          <th>Product Name / SKU</th>
+          <th>Category Name</th>
           <th>Price</th>
           <th>Stock</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let product of products">
-          <td><img [src]="product.images[0]" [alt]="product.title" class="thumb" /></td>
-          <td>
-            <div class="fw-semibold">{{ product.title }}</div>
-            <div class="text-muted-small">{{ product.brand }}</div>
+        @if(productsDataRes().length == 0){
+        <tr>
+          <td colspan="7" class="text-center">No Data Found</td>
+        </tr>
+        }@else {
+
+        @for(item of productsDataRes(); track $index){
+        <tr>
+          <td>{{$index + 1}}</td>
+          <td><img [src]="item.productImageUrl" [alt]="item.productShortName" class="thumb" /></td>
+          <td style="width: 20%;">
+            <div class="fw-semibold">{{ item.productName || '-' }}</div>
+            <div class="text-muted-small">{{ item.productSku || '-' }}</div>
           </td>
-          <td><span class="badge text-bg-light">{{ product.category }}</span></td>
-          <td>{{ product.price | currency: 'INR' }}</td>
-          <td>{{ product.stock }}</td>
+          <td><span class="badge text-bg-light">{{ item.categoryName || '-' }}</span></td>
+          <td>{{ item.productPrice | currency: 'INR' }}</td>
+          <td>{{ item.stock || '-' }}</td>
           <td>
             <div class="admin-actions">
-              <button class="admin-action-btn admin-btn-secondary" type="button" (click)="openEditModal(product)">
+              <button class="admin-action-btn admin-btn-secondary" type="button" (click)="openEditModal(item)">
                 <i class="fa-solid fa-pen"></i>
               </button>
-              <button class="admin-action-btn admin-btn-danger" type="button" (click)="deleteProduct(product.id)">
+              <button class="admin-action-btn admin-btn-danger" type="button" (click)="deleteProduct(item.productId)">
                 <i class="fa-solid fa-trash"></i>
               </button>
             </div>
           </td>
         </tr>
+        }
+        }
+
+
       </tbody>
     </table>
   </div>
@@ -52,7 +65,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
-      <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <form [formGroup]="manageProductForm" (ngSubmit)="submitForm()" >
         <div class="modal-body product-modal-body">
           <div class="row g-3">
             <div class="col-12 col-lg-7">
@@ -60,47 +73,69 @@
                 <h6 class="compact-panel-title">Basic Details</h6>
                 <div class="row g-2">
                   <div class="col-md-8">
-                    <label class="admin-form-label">Title</label>
-                    <input class="form-control admin-form-control" formControlName="title" />
+                    <label class="admin-form-label">Product Name</label>
+                    <input class="form-control admin-form-control" required formControlName="ProductName" />
+                    @if(manageProductForm.get('ProductName')?.invalid && manageProductForm.get('ProductName')?.touched){
+                    @if(manageProductForm.get('ProductName')?.errors?.['required']){
+                    <div class="text-danger">product name is required</div>
+                    }
+                    }
                   </div>
                   <div class="col-md-4">
-                    <label class="admin-form-label">Brand</label>
-                    <input class="form-control admin-form-control" formControlName="brand" />
+                    <label class="admin-form-label">Product Sku</label>
+                    <input class="form-control admin-form-control" required formControlName="ProductSku" />
+                    @if(manageProductForm.get('ProductSku')?.touched && manageProductForm.get('ProductSku')?.invalid){
+                    @if(manageProductForm.get('ProductSku')?.errors?.['required']){
+                    <div class="text-danger">product sku name is required</div>
+                    }
+                    }
                   </div>
-                  <div class="col-md-7">
+                  <div class="col-md-4">
+                    <label class="admin-form-label">Product Short Name</label>
+                    <input class="form-control admin-form-control" required formControlName="ProductShortName" />
+                    @if(manageProductForm.get('ProductShortName')?.touched &&
+                    manageProductForm.get('ProductShortName')?.invalid){
+                    @if(manageProductForm.get('ProductShortName')?.errors?.['required']){
+                    <div class="text-danger">product short name is required</div>
+                    }
+                    }
+                  </div>
+                  <div class="col-md-4">
                     <label class="admin-form-label">Category</label>
-                    <select class="form-select admin-form-select" formControlName="category">
+                    <select class="form-select admin-form-select" required formControlName="CategoryId">
                       <option value="" disabled>Select category</option>
-                      <option *ngFor="let category of categories$ | async" [value]="category.name">
-                        {{ category.name }}
+                      @for (item of getCategoryListRes(); track $index) {
+                      <option [value]="item.categoryId">
+                        {{ item.categoryName }}
                       </option>
+                      }
                     </select>
                   </div>
-                  <div class="col-md-5">
+
+                  <!-- <div class="col-md-5">
                     <label class="admin-form-label">Sizes</label>
-                    <input
-                      class="form-control admin-form-control"
-                      formControlName="sizes"
-                      placeholder="Free Size or S, M, L"
-                    />
+                    <input class="form-control admin-form-control" formControlName="sizes"
+                      placeholder="Free Size or S, M, L" />
+                  </div> -->
+                     <div class="col-md-4">
+                    <label class="admin-form-label">CreatedDate</label>
+                    <input type="date" class="form-control admin-form-control" required formControlName="CreatedDate" />
+                    @if(manageProductForm.get('CreatedDate')?.touched &&
+                    manageProductForm.get('CreatedDate')?.invalid){
+                    @if(manageProductForm.get('CreatedDate')?.errors?.['required']){
+                    <div class="text-danger"> CreatedDate is required</div>
+                    }
+                    }
                   </div>
                   <div class="col-12">
                     <label class="admin-form-label">Description</label>
-                    <textarea
-                      class="form-control admin-form-control"
-                      rows="2"
-                      formControlName="description"
-                      placeholder="Short product description"
-                    ></textarea>
+                    <textarea class="form-control admin-form-control" rows="2" formControlName="ProductDescription"
+                      placeholder="Short product description"></textarea>
                   </div>
                   <div class="col-12">
                     <label class="admin-form-label">Image URLs</label>
-                    <textarea
-                      class="form-control admin-form-control"
-                      rows="2"
-                      formControlName="images"
-                      placeholder="https://... , https://... , https://..."
-                    ></textarea>
+                    <textarea class="form-control admin-form-control" rows="2" formControlName="ProductImageUrl"
+                      placeholder="https://... , https://... , https://..."></textarea>
                     <small class="text-muted-small">Add comma-separated image URLs.</small>
                   </div>
                 </div>
@@ -113,25 +148,20 @@
                 <div class="row g-2">
                   <div class="col-6">
                     <label class="admin-form-label">Price</label>
-                    <input type="number" class="form-control admin-form-control" formControlName="price" />
+                    <input type="number" class="form-control admin-form-control" formControlName="ProductPrice" />
                   </div>
-                  <div class="col-6">
+                  <!-- <div class="col-6">
                     <label class="admin-form-label">Discount %</label>
                     <input type="number" class="form-control admin-form-control" formControlName="discountPercentage" />
                   </div>
                   <div class="col-6">
                     <label class="admin-form-label">Rating</label>
-                    <input
-                      type="number"
-                      class="form-control admin-form-control"
-                      formControlName="rating"
-                      step="0.1"
-                    />
+                    <input type="number" class="form-control admin-form-control" formControlName="rating" step="0.1" />
                   </div>
                   <div class="col-6">
                     <label class="admin-form-label">Stock</label>
                     <input type="number" class="form-control admin-form-control" formControlName="stock" />
-                  </div>
+                  </div> -->
                   <div class="col-12 compact-tips">
                     <div><i class="fa-solid fa-circle-info me-2"></i>Keep titles short for clean cards.</div>
                     <div><i class="fa-solid fa-circle-info me-2"></i>Use at least 3 images for product details.</div>
@@ -151,10 +181,5 @@
   </div>
 </div>
 
-<app-delete-confirm-modal
-  [isOpen]="isDeleteConfirmOpen"
-  title="Delete Product"
-  message="Delete this record?"
-  (cancelled)="cancelDeleteProduct()"
-  (confirmed)="confirmDeleteProduct()"
-></app-delete-confirm-modal>
+<app-delete-confirm-modal [isOpen]="isDeleteConfirmOpen" title="Delete Product" message="Delete this record?"
+  (cancelled)="cancelDeleteProduct()" (confirmed)="confirmDeleteProduct()"></app-delete-confirm-modal>
