@@ -25,13 +25,8 @@
       <div class="collapse navbar-collapse" id="mainNav">
         <form class="d-flex flex-grow-1 mx-lg-4 my-3 my-lg-0" role="search" (ngSubmit)="onSearch()">
           <div class="search-wrap w-100 d-flex">
-            <input
-              class="form-control border-0"
-              type="search"
-              name="search"
-              [(ngModel)]="searchTerm"
-              placeholder="Search sarees, salwar sets, jewellery and more"
-            />
+            <input class="form-control border-0" type="search" name="search" [(ngModel)]="searchTerm"
+              placeholder="Search sarees, salwar sets, jewellery and more" />
             <button class="btn btn-light px-3" type="submit">
               <i class="fa-solid fa-magnifying-glass"></i>
             </button>
@@ -65,13 +60,16 @@
     </div>
   </nav>
 
+  <!-- <div class="filters  py-2 px-3 px-lg-4">
+    <button class="btn btn-sm me-2 mb-2 btn-outline-primary category-pill" type="button"
+      *ngFor="let category of categoryResData()" (click)="goToCategory(category.categoryName)">
+      <i class="fa-solid me-2" [ngClass]="category.icon"></i>{{ category.categoryName }}
+    </button>
+  </div> -->
+
   <div class="category-strip py-2 px-3 px-lg-4" *ngIf="showCategoryStrip">
-    <button
-      type="button"
-      class="category-pill"
-      *ngFor="let category of featuredCategories$ | async"
-      (click)="goToCategory(category.name)"
-    >
+    <button type="button" class="category-pill" *ngFor="let category of featuredCategories$ | async"
+      (click)="goToCategory(category.name)">
       <i class="fa-solid me-2" [ngClass]="category.icon"></i>{{ category.name }}
     </button>
   </div>
@@ -82,11 +80,8 @@
 
   <app-cart-toast />
 
-  <div
-    class="ad-popup-backdrop"
-    *ngIf="isAdvertisementVisible && activeAdvertisement"
-    (click)="closeAdvertisementPopup()"
-  >
+  <div class="ad-popup-backdrop" *ngIf="isAdvertisementVisible && activeAdvertisement"
+    (click)="closeAdvertisementPopup()">
     <article class="ad-popup-modal" [ngClass]="activeAdvertisement.layout" (click)="stopPropagation($event)">
       <button class="ad-close-btn" type="button" (click)="closeAdvertisementPopup()" aria-label="Close advertisement">
         <i class="fa-solid fa-xmark"></i>
@@ -121,7 +116,8 @@
             </p>
 
             <div class="footer-socials">
-              <a href="https://www.instagram.com/zaava_collection/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              <a href="https://www.instagram.com/zaava_collection/" target="_blank" rel="noopener noreferrer"
+                aria-label="Instagram">
                 <i class="fa-brands fa-instagram"></i>
               </a>
               <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">

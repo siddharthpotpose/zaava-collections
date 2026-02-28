@@ -6,43 +6,46 @@
     </button>
   </div>
 
-  <div class="table-responsive" *ngIf="categories$ | async as categories">
+  <div class="table-responsive" >
     <table class="table align-middle mb-0 admin-table">
       <thead>
         <tr>
+          <th>#</th>
           <th>Category</th>
-          <th>Slug</th>
-          <!-- <th>Parent</th> -->
-          <th>Featured</th>
+          <th>Remark</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let category of categories">
+        @if(categoryDataRes().length == 0){
+        <tr>
+          <td class="text-center" colspan="5">No Data Found</td>
+        </tr>
+        }@else {
+        @for(item of categoryDataRes(); track $index){
+        <tr >
+          <td>{{$index + 1}}</td>
           <td>
             <div class="d-flex align-items-center gap-2">
-              <img [src]="category.image" [alt]="category.name" class="thumb" />
-              <div class="fw-semibold"><i class="fa-solid me-2" [ngClass]="category.icon"></i>{{ category.name }}</div>
+              <div class="fw-semibold">{{ item.categoryName ? item.categoryName : '-' }}</div>
             </div>
           </td>
-          <td>{{ category.slug }}</td>
-          <!-- <td>{{ category.parentCategory || '-' }}</td> -->
-          <td>
-            <span class="badge" [class.text-bg-success]="category.featured" [class.text-bg-secondary]="!category.featured">
-              {{ category.featured ? 'Yes' : 'No' }}
-            </span>
-          </td>
+          <td>{{ item.slug || '-' }}</td>
           <td>
             <div class="admin-actions">
-              <button class="admin-action-btn admin-btn-secondary" type="button" (click)="openEditModal(category)">
+              <!-- <button class="admin-action-btn admin-btn-secondary" type="button" (click)="openEditModal(item)">
                 <i class="fa-solid fa-pen"></i>
-              </button>
-              <button class="admin-action-btn admin-btn-danger" type="button" (click)="deleteCategory(category.id)">
+              </button> -->
+              <button class="admin-action-btn admin-btn-danger" type="button" (click)="deleteCategory(item.categoryId)">
                 <i class="fa-solid fa-trash"></i>
               </button>
             </div>
           </td>
         </tr>
+        }
+        }
+
+
       </tbody>
     </table>
   </div>
@@ -56,21 +59,21 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
-      <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <form [formGroup]="categoryForm" (ngSubmit)="submitForm()" novalidate>
         <div class="modal-body">
           <div class="row g-3">
             <div class="col-md-6">
               <label class="admin-form-label">Category Name</label>
-              <input class="form-control admin-form-control" formControlName="name" />
+              <input class="form-control admin-form-control" placeholder="plese enter category name" formControlName="CategoryName" />
             </div>
             <div class="col-md-6">
-              <label class="admin-form-label">Slug</label>
-              <input class="form-control admin-form-control" formControlName="slug" placeholder="banarasi-saree" />
+              <label class="admin-form-label">Remark</label>
+              <input class="form-control admin-form-control"  placeholder="Reamrk" />
             </div>
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
               <label class="admin-form-label">Icon (FontAwesome class)</label>
               <input class="form-control admin-form-control" formControlName="icon" placeholder="fa-gem" />
-            </div>
+            </div> -->
             <!-- <div class="col-md-6">
               <label class="admin-form-label">Parent Category</label>
               <select class="form-select admin-form-select" formControlName="parentCategory">
@@ -84,14 +87,14 @@
                 </option>
               </select>
             </div> -->
-            <div class="col-6">
+            <!-- <div class="col-6">
               <label class="admin-form-label">Category Image URL</label>
               <input class="form-control admin-form-control" formControlName="image" />
-            </div>
-            <div class="col-12 form-check form-switch ms-2">
+            </div> -->
+            <!-- <div class="col-12 form-check form-switch ms-2">
               <input class="form-check-input" type="checkbox" formControlName="featured" id="featuredToggle" />
               <label class="form-check-label" for="featuredToggle">Show in website quick category strip</label>
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -104,10 +107,5 @@
   </div>
 </div>
 
-<app-delete-confirm-modal
-  [isOpen]="isDeleteConfirmOpen"
-  title="Delete Category"
-  message="Delete this record?"
-  (cancelled)="cancelDeleteCategory()"
-  (confirmed)="confirmDeleteCategory()"
-></app-delete-confirm-modal>
+<app-delete-confirm-modal [isOpen]="isDeleteConfirmOpen" title="Delete Category" message="Delete this record?"
+  (cancelled)="cancelDeleteCategory()" (confirmed)="confirmDeleteCategory()"></app-delete-confirm-modal>

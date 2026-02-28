@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, HostListener, inject } from '@angular/core';
+import { Component, DestroyRef, HostListener, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
@@ -37,6 +37,7 @@ export class WebsiteLayoutComponent {
   showCategoryStrip = true;
   isAdvertisementVisible = false;
   activeAdvertisement: Advertisement | null = null;
+  
 
   readonly categories$ = this.categoryService.getCategories();
   readonly featuredCategories$ = this.categoryService.getCategories().pipe(
@@ -47,7 +48,7 @@ export class WebsiteLayoutComponent {
     map((items) => items.reduce((count, item) => count + item.quantity, 0))
   );
 
-  constructor() {
+  constructor(private destroy : DestroyRef) {
     this.updateCategoryStripVisibility(this.router.url);
 
     this.router.events
@@ -71,6 +72,22 @@ export class WebsiteLayoutComponent {
         }
       });
   }
+
+  ngOnInit(){
+this.getCategoryData();
+  }
+
+  categoryResData=signal<any[]>([]);
+
+  getCategoryData(){
+    this.categoryService.getCategory().pipe(takeUntilDestroyed(this.destroy)).subscribe({
+      next: (res:any)=>{
+      this.categoryResData.set(res.data);
+      }
+    })
+  }
+
+
 
   onSearch(): void {
     this.router.navigate(['/products'], {

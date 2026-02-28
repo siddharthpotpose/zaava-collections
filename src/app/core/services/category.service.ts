@@ -17,6 +17,20 @@ export class CategoryService {
     return this.http.get(`${environment.apiUrl}/${apiName.GetAllCategory}`)
   }
 
+  CreateNewCategory(requestBody:any){
+    return this.http.post(`${environment.apiUrl}/${apiName.CreateNewCategory}`,requestBody)
+  }
+
+
+  DeleteCategoryById(categoryId:any){
+    const id = Number(categoryId)
+    return this.http.get(`${environment.apiUrl}/${apiName.DeleteCategoryById}`,{
+      params : {id : String(id)}
+    })
+  }
+
+  // ---------------------------------------------------------------------------------- 
+
   getCategories(): Observable<Category[]> {
     return this.categoriesSubject.asObservable();
   }

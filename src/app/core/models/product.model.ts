@@ -10,6 +10,23 @@ export interface Product {
   images: string[];
   sizes: string[];
   stock: number;
+
+
+//  productId: any  
+//  productSku: string 
+//  productName: string 
+//  productPrice: any 
+//  productShortName: string 
+//  productDescription: string 
+//  createdDate: any
+//  deliveryTimeSpan : any 
+//  categoryId: any 
+//  productImageUrl: any 
+//  categoryName: any 
+
+
+
+
 }
 
 export interface CartItem {

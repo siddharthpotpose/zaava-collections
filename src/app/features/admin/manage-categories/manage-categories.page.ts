@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, ViewChild, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AfterViewInit, Component, DestroyRef, ElementRef, ViewChild, inject, signal } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Category } from '../../../core/models/category.model';
 import { CategoryService } from '../../../core/services/category.service';
 import { DeleteConfirmModalComponent } from '../../../shared/components/delete-confirm-modal/delete-confirm-modal.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 declare const bootstrap: {
   Modal: new (element: Element) => {
@@ -31,15 +32,51 @@ export class ManageCategoriesPage implements AfterViewInit {
   isDeleteConfirmOpen = false;
   pendingDeleteCategoryId: number | null = null;
 
-  readonly categories$ = this.categoryService.getCategories();
+  constructor(private service: CategoryService, private destroy: DestroyRef) { }
 
-  readonly form = this.fb.group({
-    name: ['', [Validators.required]],
-    slug: [''],
-    icon: ['fa-tag', [Validators.required]],
-    image: ['', [Validators.required]],
-    featured: [true]
-  });
+  ngOnInit() {
+    this.getCategoryDetails();
+  }
+
+  categoryDataRes = signal<any[]>([]);
+
+  getCategoryDetails() {
+    this.service.getCategory().pipe(takeUntilDestroyed(this.destroy)).subscribe({
+      next: (res: any) => {
+        this.categoryDataRes.set(res.data)
+      }
+    })
+  }
+
+  categoryForm = new FormGroup({
+    CategoryId: new FormControl(0),
+    CategoryName: new FormControl('', [Validators.required]),
+    ParentCategoryId: new FormControl(0),
+    UserId: new FormControl(0)
+  })
+
+  isEditMode: boolean = false;
+  categoryRes = signal<any[]>([]);
+
+  submitForm() {
+    if (this.categoryForm.invalid) {
+      this.categoryForm.markAllAsTouched();
+      return;
+    }
+    const categoryRes = this.categoryForm.value;
+    if (!this.isEditMode) {
+      categoryRes.CategoryId = 0;
+      categoryRes.ParentCategoryId =0;
+      this.service.CreateNewCategory(categoryRes).pipe(takeUntilDestroyed(this.destroy)).subscribe({
+        next: (res: any) => {
+          console.log(res);
+          this.categoryRes.set(res.data);
+          this.getCategoryDetails();
+          this.modalInstance?.hide();
+        }
+      })
+    }
+  }
 
   ngAfterViewInit(): void {
     if (this.modalElement?.nativeElement) {
@@ -50,53 +87,20 @@ export class ManageCategoriesPage implements AfterViewInit {
   openAddModal(): void {
     this.editingCategoryId = null;
     this.editingCategoryName = '';
-    this.form.reset({
-      name: '',
-      slug: '',
-      icon: 'fa-tag',
-      image: '',
-      featured: true
-    });
+    this.categoryForm.reset();
     this.modalInstance?.show();
   }
 
-  openEditModal(category: Category): void {
-    this.editingCategoryId = category.id;
-    this.editingCategoryName = category.name;
-    this.form.patchValue({
-      name: category.name,
-      slug: category.slug,
-      icon: category.icon,
-      image: category.image,
-      featured: category.featured ?? true
-    });
+  openEditModal(item: any): void {
+    this.editingCategoryId = item.categoryId;
+    this.editingCategoryName = item.categoryName;
+    this.categoryForm.patchValue({
+      CategoryId: item.categoryId,
+      CategoryName: item.categoryName,
+      ParentCategoryId: item.parentCategoryId,
+      UserId: item.userId
+    })
     this.modalInstance?.show();
-  }
-
-  save(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    const name = (this.form.value.name ?? '').trim();
-    const slug = this.normalizeSlug(this.form.value.slug || name);
-    const payload: Category = {
-      id: this.editingCategoryId ?? this.categoryService.getNextCategoryId(),
-      name,
-      slug,
-      icon: this.form.value.icon ?? 'fa-tag',
-      image: this.form.value.image ?? '',
-      featured: this.form.value.featured ?? true
-    };
-
-    if (this.editingCategoryId) {
-      this.categoryService.updateCategory(payload);
-    } else {
-      this.categoryService.addCategory(payload);
-    }
-
-    this.modalInstance?.hide();
   }
 
   deleteCategory(id: number): void {
@@ -114,20 +118,16 @@ export class ManageCategoriesPage implements AfterViewInit {
       return;
     }
 
-    this.categoryService.deleteCategory(this.pendingDeleteCategoryId);
+    this.service.DeleteCategoryById(this.pendingDeleteCategoryId).pipe(takeUntilDestroyed(this.destroy)).subscribe({
+      next : (res:any)=>{
+        console.log(res);
+        this.getCategoryDetails();
+      }
+    })
+
     this.cancelDeleteCategory();
   }
 
-  shouldHideParentOption(name: string): boolean {
-    return this.editingCategoryName === name;
-  }
 
-  private normalizeSlug(value: string): string {
-    return value
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .trim()
-      .replace(/\s+/g, '-');
-  }
 }
 

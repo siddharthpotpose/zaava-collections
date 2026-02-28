@@ -1,13 +1,34 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, map } from 'rxjs';
 import { Product } from '../../core/models/product.model';
 import { CartService } from '../../core/services/cart.service';
 import { CategoryService } from '../../core/services/category.service';
 import { ProductService } from '../../core/services/product.service';
 import { ToastNotificationService } from '../../core/services/toast-notification.service';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+interface ApiCategory {
+  categoryId: number;
+  categoryName: string;
+  parentCategoryId: number;
+  userId: number | null;
+}
+
+interface ApiProduct {
+  productId: number;
+  productSku: string;
+  productName: string;
+  productPrice: number;
+  productShortName: string;
+  productDescription: string;
+  createdDate: string;
+  deliveryTimeSpan: string;
+  categoryId: number;
+  productImageUrl: string;
+  categoryName: string;
+}
 
 @Component({
   selector: 'app-products-page',
@@ -24,46 +45,79 @@ export class ProductsPage {
   private readonly cartService = inject(CartService);
   private readonly toastService = inject(ToastNotificationService);
 
-  readonly categories$ = this.categoryService.getCategories().pipe(
-    map((categories) => categories.filter((category) => category.featured))
-  );
+  readonly productResData = signal<ApiProduct[]>([]);
+  readonly categoryResData = signal<ApiCategory[]>([]);
+  readonly selectedCategory = signal<string>('');
+  readonly searchQuery = signal<string>('');
 
-  readonly filters$ = this.route.queryParamMap.pipe(
-    map((params) => ({
-      category: params.get('category') ?? '',
-      search: (params.get('q') ?? '').toLowerCase()
-    }))
-  );
+  readonly topLevelCategories = computed(() => {
+    const categories = this.categoryResData();
+    const parentCategories = categories.filter((category) => Number(category.parentCategoryId) === 0);
+    return parentCategories.length > 0 ? parentCategories : categories;
+  });
 
-  readonly products$ = combineLatest([
-    this.productService.getProducts(),
-    this.filters$,
-    this.categoryService.getCategories()
-  ]).pipe(
-    map(([products, filters]) => {
-      const validCategories = filters.category
-        ? this.categoryService
-            .getCategoryAndChildrenNames(filters.category)
-            .map((category) => category.toLowerCase())
-        : [];
+  readonly filteredProducts = computed(() => {
+    const rawProducts = this.productResData();
+    const selectedCategory = this.selectedCategory().trim().toLowerCase();
+    const search = this.searchQuery().trim().toLowerCase();
+    const categories = this.categoryResData();
 
-      return products.filter((product) => {
-        const categoryMatch = filters.category
-          ? validCategories.includes(product.category.toLowerCase())
-          : true;
-        const searchMatch = filters.search
-          ? `${product.title} ${product.brand} ${product.category}`
-              .toLowerCase()
-              .includes(filters.search)
-          : true;
+    const validCategoryIds = selectedCategory
+      ? this.getCategoryFamilyIdsByName(selectedCategory, categories)
+      : null;
+
+    return rawProducts
+      .filter((product) => {
+        const categoryName = (product.categoryName || '').toLowerCase();
+        const categoryMatch = !selectedCategory
+          ? true
+          : validCategoryIds && validCategoryIds.size > 0
+            ? validCategoryIds.has(Number(product.categoryId))
+            : categoryName === selectedCategory;
+
+        const searchable = `${product.productName} ${product.productShortName} ${product.productSku} ${product.categoryName}`
+          .toLowerCase()
+          .trim();
+        const searchMatch = search ? searchable.includes(search) : true;
 
         return categoryMatch && searchMatch;
-      });
-    })
-  );
+      })
+      .map((product) => this.mapApiProductToUi(product));
+  });
+
+  constructor(private destroy: DestroyRef) {}
+
+  ngOnInit(): void {
+    this.getProductDetails();
+    this.getCategoryDetails();
+    this.watchQueryParams();
+  }
+
+  getProductDetails(): void {
+    this.productService.getProduct().pipe(takeUntilDestroyed(this.destroy)).subscribe({
+      next: (res: any) => {
+        this.productResData.set(Array.isArray(res?.data) ? res.data : []);
+      }
+    });
+  }
+
+  getCategoryDetails(): void {
+    this.categoryService.getCategory().pipe(takeUntilDestroyed(this.destroy)).subscribe({
+      next: (res: any) => {
+        this.categoryResData.set(Array.isArray(res?.data) ? res.data : []);
+      }
+    });
+  }
+
+  private watchQueryParams(): void {
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroy)).subscribe((params) => {
+      this.selectedCategory.set((params.get('category') ?? '').trim());
+      this.searchQuery.set((params.get('q') ?? '').trim());
+    });
+  }
 
   addToCart(product: Product): void {
-    this.cartService.addToCart(product, 1, product.sizes[0]);
+    this.cartService.addToCart(product, 1, product.sizes[0] ?? 'Standard');
     this.toastService.showAddedToCart(product.title, 1);
   }
 
@@ -75,5 +129,52 @@ export class ProductsPage {
         q: currentSearch || null
       }
     });
+  }
+
+  private getCategoryFamilyIdsByName(
+    selectedCategoryName: string,
+    categories: ApiCategory[]
+  ): Set<number> {
+    const normalizedName = selectedCategoryName.toLowerCase();
+    const selected = categories.find(
+      (category) => (category.categoryName || '').toLowerCase() === normalizedName
+    );
+
+    if (!selected) {
+      return new Set<number>();
+    }
+
+    const ids = new Set<number>();
+    const stack = [Number(selected.categoryId)];
+
+    while (stack.length > 0) {
+      const categoryId = stack.pop();
+      if (categoryId === undefined || ids.has(categoryId)) {
+        continue;
+      }
+
+      ids.add(categoryId);
+      categories
+        .filter((category) => Number(category.parentCategoryId) === categoryId)
+        .forEach((child) => stack.push(Number(child.categoryId)));
+    }
+
+    return ids;
+  }
+
+  private mapApiProductToUi(product: ApiProduct): Product {
+    return {
+      id: Number(product.productId),
+      title: product.productName || 'Untitled Product',
+      brand: product.productShortName || product.categoryName || 'ZAAVA',
+      category: product.categoryName || 'General',
+      price: Number(product.productPrice) || 0,
+      discountPercentage: 0,
+      rating: 4.5,
+      description: product.productDescription || '',
+      images: [product.productImageUrl || 'https://via.placeholder.com/600x600?text=Product'],
+      sizes: ['Standard'],
+      stock: 50
+    };
   }
 }

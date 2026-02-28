@@ -33,6 +33,30 @@
 }
 
 .category-pill {
+  /* width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  white-space: normal;
+  min-height: 46px; */
+  border: 1px solid #e2d2ef;
+  background: #fff;
+  color: #6d28d9;
+  border-radius: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.category-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(109, 40, 217, 0.18);
+}
+
+/* 
+.category-pill {
   border: 1px solid #e2d2ef;
   background: #fff;
   color: #6d28d9;
@@ -46,7 +70,7 @@
 .category-pill:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(109, 40, 217, 0.18);
-}
+} */
 
 .cart-count {
   position: absolute;

@@ -1,13 +1,8 @@
 <section class="home-hero mb-4" *ngIf="banners$ | async as banners">
   <div #heroCarouselEl id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-pause="false">
     <div class="carousel-indicators">
-      <button
-        *ngFor="let banner of banners; let index = index"
-        type="button"
-        data-bs-target="#heroCarousel"
-        [attr.data-bs-slide-to]="index"
-        [class.active]="index === 0"
-      ></button>
+      <button *ngFor="let banner of banners; let index = index" type="button" data-bs-target="#heroCarousel"
+        [attr.data-bs-slide-to]="index" [class.active]="index === 0"></button>
     </div>
 
     <div class="carousel-inner rounded-4 overflow-hidden card-shadow">
@@ -35,30 +30,52 @@
 
 <section class="mb-4 p-3 rounded-4 card-shadow">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="section-title mb-0">Women Categories</h2>
-    <a routerLink="/products" class="btn btn-outline-primary btn-sm">View All Products</a>
+    <h2 class="section-title mb-0">Shop by Category</h2>
+    <a routerLink="/products" class="btn btn-outline-primary btn-sm ">View All Products</a>
   </div>
 
-  <div class="row g-3" *ngIf="categories$ | async as categories">
+  <!-- <div class="row g-3" *ngIf="categories$ | async as categories">
     <div class="col-6 col-md-4 col-lg-3 col-xxl-2" *ngFor="let category of categories">
       <a class="category-tile zen-card" [routerLink]="['/products']" [queryParams]="{ category: category.name }">
         <img [src]="category.image" [alt]="category.name" class="category-image mb-2" />
         <div class="fw-semibold"><i class="fa-solid me-2" [ngClass]="category.icon"></i>{{ category.name }}</div>
       </a>
     </div>
+  </div> -->
+
+  <div class="filters mb-3">
+    <button class="btn btn-sm me-2 mb-2 btn-outline-dark" type="button" (click)="selectCategory(null)">All</button>
+    <button class="btn btn-sm me-2 mb-2 btn-outline-primary category-pill" type="button"
+      *ngFor="let category of topLevelCategories()" (click)="selectCategory(category.categoryName)">
+      {{ category.categoryName }}
+    </button>
   </div>
+
+  <!-- <div class="row g-3">
+    @for (item of categoryListRes(); track $index) {
+    <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+      <button type="button" class="category-pill">
+        <i class="fa-solid me-2" [ngClass]="item.icon"></i>{{ item.categoryName }}
+      </button>
+    </div>
+    }
+  </div> -->
+
 </section>
 
 <section class="mb-4 p-3 rounded-4 card-shadow">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="section-title mb-0">Saree Spotlight</h2>
-    <a [routerLink]="['/products']" [queryParams]="{ category: 'Saree' }" class="btn btn-outline-primary btn-sm">
-      Explore Sarees
+    <h2 class="section-title mb-0">Featured Products</h2>
+    <a [routerLink]="['/products']" class="btn btn-outline-primary btn-sm">
+      Explore Products
     </a>
   </div>
 
-  <div class="row g-3" *ngIf="sareeFocus$ | async as sarees">
-    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" *ngFor="let product of sarees">
+  <div class="row g-3" *ngIf="featuredProducts() as products">
+    <div class="col-12 text-center py-5" *ngIf="products.length === 0">
+      <h5>No products available right now.</h5>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3" *ngFor="let product of products">
       <app-product-card [product]="product" (addToCart)="addToCart($event)"></app-product-card>
     </div>
   </div>
@@ -67,10 +84,15 @@
 <section class="p-3 rounded-4 card-shadow">
   <h2 class="section-title">All Category Collections</h2>
 
-  <div class="mb-4" *ngFor="let row of categoryRows$ | async">
+  <div class="empty-category-row text-muted-small mb-4" *ngIf="categoryRows().length === 0">
+    No categories available right now.
+  </div>
+
+  <div class="mb-4" *ngFor="let row of categoryRows()">
     <div class="d-flex justify-content-between align-items-center mb-2">
-      <h5 class="mb-0">{{ row.category.name }}</h5>
-      <a [routerLink]="['/products']" [queryParams]="{ category: row.category.name }" class="btn btn-outline-primary btn-sm">
+      <h5 class="mb-0">{{ row.category.categoryName }}</h5>
+      <a [routerLink]="['/products']" [queryParams]="{ category: row.category.categoryName }"
+        class="btn btn-outline-primary btn-sm">
         View All
       </a>
     </div>

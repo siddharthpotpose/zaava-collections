@@ -1,10 +1,25 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CartService } from '../../core/services/cart.service';
 import { Product } from '../../core/models/product.model';
 import { ProductService } from '../../core/services/product.service';
 import { ToastNotificationService } from '../../core/services/toast-notification.service';
+
+interface ApiProduct {
+  productId: number;
+  productSku: string;
+  productName: string;
+  productPrice: number;
+  productShortName: string;
+  productDescription: string;
+  createdDate: string;
+  deliveryTimeSpan: string;
+  categoryId: number;
+  productImageUrl: string;
+  categoryName: string;
+}
 
 @Component({
   selector: 'app-product-details-page',
@@ -18,6 +33,7 @@ export class ProductDetailsPage {
   private readonly productService = inject(ProductService);
   private readonly cartService = inject(CartService);
   private readonly toastService = inject(ToastNotificationService);
+  private readonly destroy = inject(DestroyRef);
 
   product?: Product;
   selectedImage = 0;
@@ -25,19 +41,23 @@ export class ProductDetailsPage {
   quantity = 1;
   selectedSize = '';
   suggestionSlides: Product[][] = [];
+  private readonly apiProducts = signal<Product[]>([]);
+  private requestedProductId: number | null = null;
 
-  constructor() {
-    this.route.paramMap.subscribe((params) => {
+  ngOnInit(): void {
+    this.loadAllProducts();
+
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroy)).subscribe((params) => {
       const id = Number(params.get('id'));
-      const found = this.productService.getProductById(id);
-      this.product = found;
-      this.selectedImage = 0;
-      this.modalImageIndex = 0;
-      this.quantity = 1;
-      this.selectedSize = found?.sizes[0] ?? '';
+      if (!id || Number.isNaN(id)) {
+        this.requestedProductId = null;
+        this.setActiveProduct(undefined);
+        return;
+      }
 
-      if (found) {
-        this.buildSuggestionSlides(found);
+      this.requestedProductId = id;
+      if (!this.trySetProductFromList(id)) {
+        this.setActiveProduct(undefined);
       }
     });
   }
@@ -89,12 +109,68 @@ export class ProductDetailsPage {
       return;
     }
 
-    this.cartService.addToCart(this.product, this.quantity, this.selectedSize || this.product.sizes[0]);
+    this.cartService.addToCart(this.product, this.quantity, this.selectedSize || this.product.sizes[0] || 'Standard');
     this.toastService.showAddedToCart(this.product.title, this.quantity);
   }
 
+  private loadAllProducts(): void {
+    const cachedProducts = this.productService.getCachedApiProducts<ApiProduct>();
+    if (cachedProducts.length > 0) {
+      this.setApiProducts(cachedProducts);
+    }
+
+    this.productService.getProduct().pipe(takeUntilDestroyed(this.destroy)).subscribe({
+      next: (res: any) => {
+        const products = Array.isArray(res?.data) ? res.data : [];
+        this.setApiProducts(products);
+      }
+    });
+  }
+
+  private setApiProducts(products: ApiProduct[]): void {
+    this.apiProducts.set(products.map((item: ApiProduct) => this.mapApiProductToUi(item)));
+
+    if (this.requestedProductId && !this.product) {
+      this.trySetProductFromList(this.requestedProductId);
+    }
+
+    if (this.product) {
+      this.buildSuggestionSlides(this.product);
+    }
+  }
+
+  private setActiveProduct(product: Product | undefined): void {
+    this.product = product;
+    this.selectedImage = 0;
+    this.modalImageIndex = 0;
+    this.quantity = 1;
+    this.selectedSize = this.product?.sizes[0] ?? 'Standard';
+
+    if (this.product) {
+      this.buildSuggestionSlides(this.product);
+      return;
+    }
+
+    this.suggestionSlides = [];
+  }
+
+  private trySetProductFromList(productId: number): boolean {
+    const fallback = this.apiProducts().find((item) => item.id === productId);
+    if (!fallback) {
+      return false;
+    }
+
+    this.setActiveProduct(fallback);
+    return true;
+  }
+
   private buildSuggestionSlides(product: Product): void {
-    const allProducts = this.productService.getProductsSnapshot();
+    const allProducts = this.apiProducts();
+    if (allProducts.length === 0) {
+      this.suggestionSlides = [];
+      return;
+    }
+
     const sameCategoryProducts = allProducts.filter(
       (item) => item.id !== product.id && item.category === product.category
     );
@@ -126,5 +202,21 @@ export class ProductDetailsPage {
     }
 
     return chunks;
+  }
+
+  private mapApiProductToUi(product: ApiProduct): Product {
+    return {
+      id: Number(product.productId),
+      title: product.productName || 'Untitled Product',
+      brand: product.productShortName || product.categoryName || 'ZAAVA',
+      category: product.categoryName || 'General',
+      price: Number(product.productPrice) || 0,
+      discountPercentage: 0,
+      rating: 4.5,
+      description: product.productDescription || '',
+      images: [product.productImageUrl || 'https://via.placeholder.com/600x600?text=Product'],
+      sizes: ['Standard'],
+      stock: 50
+    };
   }
 }
