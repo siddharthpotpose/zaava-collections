@@ -98,14 +98,46 @@
   max-width: 980px;
 }
 
+.advertisement-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(15, 23, 42, 0.32);
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.advertisement-modal.show {
+  display: grid !important;
+  place-items: center;
+}
+
+.advertisement-modal .modal-dialog {
+  margin: 0;
+  width: min(980px, 100%);
+  max-height: 100%;
+}
+
 .advertisement-modal .modal-content {
   max-height: min(88vh, 900px);
+  display: flex;
+  flex-direction: column;
 }
 
 .advertisement-modal-body {
   padding-top: 0.8rem;
   padding-bottom: 0.8rem;
   overflow-y: auto;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.advertisement-modal form {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .ad-form-panel {
@@ -304,6 +336,44 @@
 }
 
 @media (max-width: 767.98px) {
+  .advertisement-modal {
+    padding: 0.5rem;
+  }
+
+  .advertisement-modal .modal-dialog {
+    margin: 0;
+    width: calc(100vw - 1rem);
+    height: calc(100dvh - 1rem);
+  }
+
+  .advertisement-modal .modal-dialog-centered {
+    min-height: calc(100dvh - 1rem);
+    align-items: stretch;
+  }
+
+  .advertisement-modal .modal-dialog-scrollable {
+    height: calc(100dvh - 1rem);
+  }
+
+  .advertisement-modal .modal-content {
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0.85rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .advertisement-modal .modal-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .advertisement-modal .modal-footer .admin-btn-secondary,
+  .advertisement-modal .modal-footer .admin-btn-primary {
+    width: 100%;
+  }
+
   .ad-entry-card {
     grid-template-columns: 1fr;
   }

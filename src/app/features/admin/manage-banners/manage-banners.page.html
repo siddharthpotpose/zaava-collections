@@ -21,7 +21,7 @@
           <td><img [src]="banner.image" [alt]="banner.title" class="banner-thumb" /></td>
           <td>
             <div class="fw-semibold">{{ banner.title | titlecase }}</div>
-            <div class="text-muted-small">{{ banner.subtitle  }}</div>
+            <div class="text-muted-small">{{ banner.subtitle }}</div>
           </td>
           <td>
             <div class="fw-semibold">{{ banner.ctaLabel }}</div>
@@ -43,8 +43,8 @@
   </div>
 </section>
 
-<div class="modal fade admin-modal" #bannerModal tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+<div class="modal fade admin-modal banner-modal" #bannerModal tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable banner-modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">{{ editingBannerId ? 'Edit Slide' : 'Add Slide' }}</h5>
@@ -56,23 +56,53 @@
           <div class="row g-3">
             <div class="col-md-6">
               <label class="admin-form-label">Title</label>
-              <input class="form-control admin-form-control" formControlName="title" />
+              <input class="form-control admin-form-control" required formControlName="title" />
+              @if(form.get('title')?.touched &&
+              form.get('title')?.invalid){
+              @if(form.get('title')?.errors?.['required']){
+              <div class="text-danger"> Title is required</div>
+              }
+              }
             </div>
             <div class="col-md-6">
               <label class="admin-form-label">CTA Label</label>
-              <input class="form-control admin-form-control" formControlName="ctaLabel" />
+              <input class="form-control admin-form-control" req formControlName="ctaLabel" />
+                @if(form.get('ctaLabel')?.touched &&
+              form.get('ctaLabel')?.invalid){
+              @if(form.get('ctaLabel')?.errors?.['required']){
+              <div class="text-danger"> CTA is required</div>
+              }
+              }
             </div>
             <div class="col-12">
               <label class="admin-form-label">Subtitle</label>
-              <textarea class="form-control admin-form-control" rows="2" formControlName="subtitle"></textarea>
+              <textarea class="form-control admin-form-control" required rows="2" formControlName="subtitle"></textarea>
+                 @if(form.get('subtitle')?.touched &&
+              form.get('subtitle')?.invalid){
+              @if(form.get('subtitle')?.errors?.['required']){
+              <div class="text-danger"> subtitle is required</div>
+              }
+              }
             </div>
             <div class="col-12">
               <label class="admin-form-label">Image URL</label>
-              <input class="form-control admin-form-control" formControlName="image" />
+              <input class="form-control admin-form-control" required formControlName="image" />
+                @if(form.get('image')?.touched &&
+              form.get('image')?.invalid){
+              @if(form.get('image')?.errors?.['required']){
+              <div class="text-danger"> image is required</div>
+              }
+              }
             </div>
             <div class="col-12">
               <label class="admin-form-label">CTA Link (example: /products?category=Saree)</label>
-              <input class="form-control admin-form-control" formControlName="ctaLink" />
+              <input class="form-control admin-form-control" required formControlName="ctaLink" />
+                @if(form.get('ctaLink')?.touched &&
+              form.get('ctaLink')?.invalid){
+              @if(form.get('ctaLink')?.errors?.['required']){
+              <div class="text-danger"> ctaLink is required</div>
+              }
+              }
             </div>
           </div>
         </div>
@@ -86,10 +116,5 @@
   </div>
 </div>
 
-<app-delete-confirm-modal
-  [isOpen]="isDeleteConfirmOpen"
-  title="Delete Slide"
-  message="Delete this record?"
-  (cancelled)="cancelDeleteBanner()"
-  (confirmed)="confirmDeleteBanner()"
-></app-delete-confirm-modal>
+<app-delete-confirm-modal [isOpen]="isDeleteConfirmOpen" title="Delete Slide" message="Delete this record?"
+  (cancelled)="cancelDeleteBanner()" (confirmed)="confirmDeleteBanner()"></app-delete-confirm-modal>

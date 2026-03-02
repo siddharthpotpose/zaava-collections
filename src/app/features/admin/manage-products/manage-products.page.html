@@ -58,7 +58,7 @@
 </section>
 
 <div class="modal fade admin-modal product-modal" #productModal tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-centered product-modal-dialog">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable product-modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">{{ editingProductId ? 'Edit Product' : 'Add Product' }}</h5>
@@ -110,6 +110,12 @@
                       </option>
                       }
                     </select>
+                     @if(manageProductForm.get('CategoryId')?.touched &&
+                    manageProductForm.get('CategoryId')?.invalid){
+                    @if(manageProductForm.get('CategoryId')?.errors?.['required']){
+                    <div class="text-danger">select category required</div>
+                    }
+                    }
                   </div>
 
                   <!-- <div class="col-md-5">
@@ -131,6 +137,12 @@
                     <label class="admin-form-label">Description</label>
                     <textarea class="form-control admin-form-control" rows="2" formControlName="ProductDescription"
                       placeholder="Short product description"></textarea>
+                        @if(manageProductForm.get('ProductDescription')?.touched &&
+                    manageProductForm.get('ProductDescription')?.invalid){
+                    @if(manageProductForm.get('ProductDescription')?.errors?.['required']){
+                    <div class="text-danger"> ProductDescription is required</div>
+                    }
+                    }
                   </div>
                   <div class="col-12">
                     <label class="admin-form-label">Image URLs</label>
@@ -152,7 +164,12 @@
                 <div class="row g-2">
                   <div class="col-6">
                     <label class="admin-form-label">Price</label>
-                    <input type="number" class="form-control admin-form-control" formControlName="ProductPrice" />
+                    <input type="number" required class="form-control admin-form-control" formControlName="ProductPrice" />
+                   @if(manageProductForm.get('ProductPrice')?.touched && manageProductForm.get('ProductPrice')?.invalid){
+                    @if(manageProductForm.get('ProductPrice')?.errors?.['required']){
+                    <div class="text-danger">product price is required</div>
+                    }
+                    }
                   </div>
                   <!-- <div class="col-6">
                     <label class="admin-form-label">Discount %</label>
