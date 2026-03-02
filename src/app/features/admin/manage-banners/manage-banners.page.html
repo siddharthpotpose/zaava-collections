@@ -20,8 +20,8 @@
         <tr *ngFor="let banner of banners">
           <td><img [src]="banner.image" [alt]="banner.title" class="banner-thumb" /></td>
           <td>
-            <div class="fw-semibold">{{ banner.title }}</div>
-            <div class="text-muted-small">{{ banner.subtitle }}</div>
+            <div class="fw-semibold">{{ banner.title | titlecase }}</div>
+            <div class="text-muted-small">{{ banner.subtitle  }}</div>
           </td>
           <td>
             <div class="fw-semibold">{{ banner.ctaLabel }}</div>

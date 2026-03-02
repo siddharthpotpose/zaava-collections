@@ -1,31 +1,21 @@
 <section *ngIf="product; else missingProduct" class="p-3 p-lg-4 rounded-4 card-shadow mb-4">
   <div class="row g-4">
     <div class="col-12 col-lg-5">
-      <button
-        type="button"
-        class="border-0 bg-transparent p-0 w-100"
-        data-bs-toggle="modal"
-        data-bs-target="#productImageModal"
-        (click)="openImageModal(selectedImage)"
-      >
+      <button type="button" class="border-0 bg-transparent p-0 w-100" data-bs-toggle="modal"
+        data-bs-target="#productImageModal" (click)="openImageModal(selectedImage)">
         <img [src]="product.images[selectedImage]" [alt]="product.title" class="main-image" />
       </button>
 
       <div class="d-flex gap-2 mt-3 flex-wrap">
-        <button
-          type="button"
-          class="thumbnail-btn"
-          *ngFor="let image of product.images; let index = index"
-          [class.active]="selectedImage === index"
-          (click)="selectThumbnail(index)"
-        >
+        <button type="button" class="thumbnail-btn" *ngFor="let image of product.images; let index = index"
+          [class.active]="selectedImage === index" (click)="selectThumbnail(index)">
           <img [src]="image" [alt]="product.title + ' thumbnail ' + (index + 1)" class="thumbnail-image" />
         </button>
       </div>
     </div>
 
     <div class="col-12 col-lg-7">
-      <h2 class="mb-2">{{ product.title }}</h2>
+      <h2 class="mb-2">{{ product.title | titlecase }}</h2>
       <div class="mb-2">
         <span class="rating-badge me-2"><i class="fa-solid fa-star me-1"></i>{{ product.rating }}</span>
         <span class="text-muted-small">Brand: {{ product.brand }}</span>
@@ -42,14 +32,8 @@
       <div class="mb-3">
         <h6 class="fw-semibold">Size</h6>
         <div class="d-flex flex-wrap gap-2">
-          <button
-            class="btn btn-sm"
-            *ngFor="let size of product.sizes"
-            [class.btn-primary]="selectedSize === size"
-            [class.btn-outline-primary]="selectedSize !== size"
-            (click)="selectedSize = size"
-            type="button"
-          >
+          <button class="btn btn-sm" *ngFor="let size of product.sizes" [class.btn-primary]="selectedSize === size"
+            [class.btn-outline-primary]="selectedSize !== size" (click)="selectedSize = size" type="button">
             {{ size }}
           </button>
         </div>
@@ -86,7 +70,7 @@
             <a class="suggestion-card" [routerLink]="['/products', suggestion.id]">
               <img [src]="suggestion.images[0]" [alt]="suggestion.title" class="suggestion-image" />
               <div class="p-2">
-                <p class="fw-semibold mb-1 text-truncate">{{ suggestion.title }}</p>
+                <p class="fw-semibold mb-1 text-truncate">{{ suggestion.title | titlecase }}</p>
                 <p class="mb-0 text-success fw-semibold">{{ suggestion.price | currency: 'INR' }}</p>
               </div>
             </a>
@@ -95,22 +79,12 @@
       </div>
     </div>
 
-    <button
-      *ngIf="suggestionSlides.length > 1"
-      class="carousel-control-prev"
-      type="button"
-      data-bs-target="#suggestionCarousel"
-      data-bs-slide="prev"
-    >
+    <button *ngIf="suggestionSlides.length > 1" class="carousel-control-prev" type="button"
+      data-bs-target="#suggestionCarousel" data-bs-slide="prev">
       <span class="carousel-control-prev-icon"></span>
     </button>
-    <button
-      *ngIf="suggestionSlides.length > 1"
-      class="carousel-control-next"
-      type="button"
-      data-bs-target="#suggestionCarousel"
-      data-bs-slide="next"
-    >
+    <button *ngIf="suggestionSlides.length > 1" class="carousel-control-next" type="button"
+      data-bs-target="#suggestionCarousel" data-bs-slide="next">
       <span class="carousel-control-next-icon"></span>
     </button>
   </div>
@@ -123,21 +97,41 @@
   </div>
 </ng-template>
 
-<div class="modal fade" id="productImageModal" tabindex="-1" aria-labelledby="productImageModalLabel" aria-hidden="true">
+<div class="modal fade product-image-modal" id="productImageModal" tabindex="-1"
+  aria-labelledby="productImageModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="productImageModalLabel">{{ product?.title }}</h5>
+      <div class="modal-header" *ngIf="product">
+        <h5 class="modal-title" id="productImageModalLabel">{{ product?.title | titlecase}}</h5>
+        <span class="modal-image-counter mx-5" *ngIf="!isSmallDevice">Image {{ modalImageIndex + 1 }} / {{
+          product.images.length }}</span>
+        <button type="button" class="btn btn-sm zoom-reset-btn mx-5" (click)="resetModalImageZoom()"
+          [disabled]="!isModalImageZoomed" *ngIf="!isSmallDevice">
+          <i class="fa-solid fa-magnifying-glass-minus me-1"></i>Reset Zoom
+        </button>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <!-- <div class="modal-tools" *ngIf="product">
+          <span class="modal-image-counter">Image {{ modalImageIndex + 1 }} / {{ product.images.length }}</span>
+          <button
+            type="button"
+            class="btn btn-sm zoom-reset-btn"
+            (click)="resetModalImageZoom()"
+            [disabled]="!isModalImageZoomed"
+          >
+            <i class="fa-solid fa-magnifying-glass-minus me-1"></i>Reset Zoom
+          </button>
+        </div> -->
+
         <div class="modal-image-wrap">
-          <img
-            *ngIf="product"
-            [src]="product.images[modalImageIndex]"
-            [alt]="'Product image ' + (modalImageIndex + 1)"
-            class="d-block w-100 modal-image"
-          />
+          <img *ngIf="product" [src]="product.images[modalImageIndex]" [alt]="'Product image ' + (modalImageIndex + 1)"
+            class="d-block w-100 modal-image" [class.zoomed]="isModalImageZoomed"
+            [class.is-panning]="isModalImagePanning" [style.transform]="modalImageTransformStyle"
+            (click)="toggleModalImageZoom()" (pointerdown)="onModalImagePointerDown($event)"
+            (pointermove)="onModalImagePointerMove($event)" (pointerup)="onModalImagePointerUp($event)"
+            (pointercancel)="onModalImagePointerUp($event)" (pointerleave)="onModalImagePointerUp($event)"
+            draggable="false" />
 
           <button class="modal-nav prev" type="button" (click)="previousModalImage()">
             <i class="fa-solid fa-chevron-left"></i>
@@ -147,14 +141,15 @@
           </button>
         </div>
 
+        <div class="modal-image-hint text-center mt-2">
+          <span>
+            <i class="fa-solid fa-circle-info me-1"></i>Click image to zoom. Drag to move when zoomed.
+          </span>
+        </div>
+
         <div class="d-flex gap-2 justify-content-center mt-3" *ngIf="product">
-          <button
-            class="modal-thumb-btn"
-            type="button"
-            *ngFor="let image of product.images; let index = index"
-            [class.active]="modalImageIndex === index"
-            (click)="openImageModal(index)"
-          >
+          <button class="modal-thumb-btn" type="button" *ngFor="let image of product.images; let index = index"
+            [class.active]="modalImageIndex === index" (click)="openImageModal(index)">
             <img [src]="image" [alt]="'Modal thumb ' + (index + 1)" class="modal-thumb" />
           </button>
         </div>

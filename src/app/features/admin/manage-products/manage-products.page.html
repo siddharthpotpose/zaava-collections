@@ -29,7 +29,7 @@
         @for(item of productsDataRes(); track $index){
         <tr>
           <td>{{$index + 1}}</td>
-          <td><img [src]="item.productImageUrl" [alt]="item.productShortName" class="thumb" /></td>
+          <td><img [src]="getPrimaryImageUrl(item.productImageUrl)" [alt]="item.productShortName" class="thumb" /></td>
           <td style="width: 20%;">
             <div class="fw-semibold">{{ item.productName || '-' }}</div>
             <div class="text-muted-small">{{ item.productSku || '-' }}</div>
@@ -136,7 +136,11 @@
                     <label class="admin-form-label">Image URLs</label>
                     <textarea class="form-control admin-form-control" rows="2" formControlName="ProductImageUrl"
                       placeholder="https://... , https://... , https://..."></textarea>
-                    <small class="text-muted-small">Add comma-separated image URLs.</small>
+                    <small class="text-muted-small">Add up to 5 image URLs (comma or new line separated).</small>
+                    @if(manageProductForm.get('ProductImageUrl')?.touched &&
+                    manageProductForm.get('ProductImageUrl')?.invalid){
+                    <div class="text-danger">at least one valid image URL is required (max 5)</div>
+                    }
                   </div>
                 </div>
               </div>
@@ -164,7 +168,7 @@
                   </div> -->
                   <div class="col-12 compact-tips">
                     <div><i class="fa-solid fa-circle-info me-2"></i>Keep titles short for clean cards.</div>
-                    <div><i class="fa-solid fa-circle-info me-2"></i>Use at least 3 images for product details.</div>
+                    <div><i class="fa-solid fa-circle-info me-2"></i>You can add up to 5 images for product details.</div>
                   </div>
                 </div>
               </div>

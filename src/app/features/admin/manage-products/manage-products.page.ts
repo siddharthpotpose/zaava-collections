@@ -1,12 +1,14 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { AfterViewInit, Component, DestroyRef, ElementRef, ViewChild, inject, signal } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { map } from 'rxjs';
-import { Product } from '../../../core/models/product.model';
+import { AfterViewInit, Component, DestroyRef, ElementRef, ViewChild, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CategoryService } from '../../../core/services/category.service';
 import { ProductService } from '../../../core/services/product.service';
 import { DeleteConfirmModalComponent } from '../../../shared/components/delete-confirm-modal/delete-confirm-modal.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  getPrimaryProductImageUrl,
+  normalizeProductImageUrls
+} from '../../../core/utils/product-images.util';
 
 declare const bootstrap: {
   Modal: new (element: Element) => {
@@ -24,9 +26,6 @@ declare const bootstrap: {
 })
 export class ManageProductsPage {
   @ViewChild('productModal') modalElement?: ElementRef<HTMLDivElement>;
-
-  private readonly productService = inject(ProductService);
-  private readonly categoryService = inject(CategoryService);
 
   private modalInstance?: { show: () => void; hide: () => void };
   editingProductId: number | null = null;
@@ -89,7 +88,16 @@ export class ManageProductsPage {
       this.manageProductForm.markAllAsTouched();
       return;
     }
-    const formData = this.manageProductForm.value;
+
+    const formData = { ...this.manageProductForm.value };
+    const normalizedImageUrls = normalizeProductImageUrls(formData.ProductImageUrl, 5);
+    if (!normalizedImageUrls) {
+      this.manageProductForm.controls.ProductImageUrl.setErrors({ required: true });
+      this.manageProductForm.controls.ProductImageUrl.markAsTouched();
+      return;
+    }
+    formData.ProductImageUrl = normalizedImageUrls;
+
     if (!this.isEditMode) {
       formData.ProductId = 0;
       this.service.createProductEntry(formData).pipe(takeUntilDestroyed(this.destroy)).subscribe({
@@ -134,9 +142,14 @@ export class ManageProductsPage {
 
 
   openAddModal(): void {
+    this.isEditMode = false;
     this.editingProductId = null;
     this.manageProductForm.reset();
     this.modalInstance?.show();
+  }
+
+  getPrimaryImageUrl(rawImageUrl: string | null | undefined): string {
+    return getPrimaryProductImageUrl(rawImageUrl, 5);
   }
 
 

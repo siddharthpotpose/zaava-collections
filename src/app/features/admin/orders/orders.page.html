@@ -73,7 +73,7 @@
               </thead>
               <tbody>
                 <tr *ngFor="let product of order.products">
-                  <td>{{ product.productTitle }}</td>
+                  <td>{{ product.productTitle | titlecase}}</td>
                   <td>{{ product.selectedSize || 'Standard' }}</td>
                   <td>{{ product.quantity }}</td>
                   <td>{{ product.unitPrice | currency: 'INR' }}</td>

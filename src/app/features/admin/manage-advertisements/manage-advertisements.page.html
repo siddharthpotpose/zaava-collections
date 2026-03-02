@@ -21,7 +21,7 @@
         <div class="ad-entry-main">
           <div class="ad-entry-top">
             <div>
-              <h6 class="ad-entry-title mb-1">{{ advertisement.title }}</h6>
+              <h6 class="ad-entry-title mb-1">{{ advertisement.title | titlecase}}</h6>
               <p class="ad-entry-subtext mb-0">{{ advertisement.subtext }}</p>
             </div>
             <span class="badge" [ngClass]="getStatusClass(advertisement)">

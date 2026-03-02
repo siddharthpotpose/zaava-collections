@@ -8,8 +8,8 @@
 }
 
 .website-brand-logo {
-  width: 42px;
-  height: 42px;
+  width: 55px;
+  height: 55px;
   object-fit: cover;
   border-radius: 0.6rem;
   margin-right: 0.65rem;
@@ -107,8 +107,8 @@
 }
 
 .footer-brand-logo {
-  width: 46px;
-  height: 46px;
+  width: 30%;
+  height: 30%;
   object-fit: cover;
   border-radius: 0.7rem;
   margin-right: 0.6rem;
@@ -242,8 +242,8 @@
   }
 
   .footer-brand-logo {
-    width: 40px;
-    height: 40px;
+    width: 30%;
+    height: 30%;
   }
 }
 

@@ -8,6 +8,7 @@ import { ProductService } from '../../core/services/product.service';
 import { ToastNotificationService } from '../../core/services/toast-notification.service';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { getProductImageUrls } from '../../core/utils/product-images.util';
 
 interface ApiCategory {
   categoryId: number;
@@ -172,7 +173,7 @@ export class ProductsPage {
       discountPercentage: 0,
       rating: 4.5,
       description: product.productDescription || '',
-      images: [product.productImageUrl || 'https://via.placeholder.com/600x600?text=Product'],
+      images: getProductImageUrls(product.productImageUrl, 5),
       sizes: ['Standard'],
       stock: 50
     };
