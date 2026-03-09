@@ -8,4 +8,8 @@ export class apiName{
     public static GetAllCategory = 'GetAllCategory'
     public static CreateNewCategory = 'CreateNewCategory';
     public static DeleteCategoryById = 'DeleteCategoryById';
+    public static CreateNewOffer = 'CreateNewOffer';
+    public static GetAllOffers = 'GetAllOffers';
+    
+
 }

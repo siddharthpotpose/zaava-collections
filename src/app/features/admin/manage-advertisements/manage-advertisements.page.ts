@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, ElementRef, ViewChild, inject, signal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -12,6 +12,8 @@ import { map } from 'rxjs';
 import { Advertisement, AdvertisementLayout } from '../../../core/models/advertisement.model';
 import { AdvertisementService } from '../../../core/services/advertisement.service';
 import { DeleteConfirmModalComponent } from '../../../shared/components/delete-confirm-modal/delete-confirm-modal.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { getPrimaryProductImageUrl } from '../../../core/utils/product-images.util';
 
 declare const bootstrap: {
   Modal: new (element: Element) => {
@@ -40,6 +42,29 @@ export class ManageAdvertisementsPage implements AfterViewInit {
   selectedImageName = '';
   isDeleteConfirmOpen = false;
   pendingDeleteAdvertisementId: number | null = null;
+
+  offerRes = signal<any[]>([]);
+
+
+  constructor(private service : AdvertisementService, private destroy : DestroyRef){}
+
+  ngOnInit(){
+    this.getAllOffers();
+  }
+
+  getAllOffers(){
+    this.service.GetAllOffers().pipe(takeUntilDestroyed(this.destroy)).subscribe({
+      next : (res:any)=>{
+        this.offerRes.set(res.data)
+        console.log(res.data)
+      }
+    })
+  }
+
+   getPrimaryImageUrl(rawImageUrl: string | null | undefined): string {
+      return getPrimaryProductImageUrl(rawImageUrl, 5);
+    }
+
 
   readonly advertisements$ = this.advertisementService
     .getAdvertisements()

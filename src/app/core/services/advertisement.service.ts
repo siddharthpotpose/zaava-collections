@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ADVERTISEMENTS } from '../data/advertisements.data';
 import { Advertisement } from '../models/advertisement.model';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environment/environment';
+import { apiName } from '../apis/apiName';
 
 @Injectable({ providedIn: 'root' })
 export class AdvertisementService {
@@ -9,6 +12,18 @@ export class AdvertisementService {
   private readonly advertisementsSubject = new BehaviorSubject<Advertisement[]>(
     this.restoreAdvertisements()
   );
+
+  constructor(private http : HttpClient){}
+
+
+  CreateNewOffer(requestBody : any){
+    return this.http.post(`${environment.apiUrl}/${apiName.CreateNewOffer}`,requestBody)
+  }
+
+  GetAllOffers(){
+    return this.http.get(`${environment.apiUrl}/${apiName.GetAllOffers}`)
+  }
+
 
   getAdvertisements(): Observable<Advertisement[]> {
     return this.advertisementsSubject.asObservable();

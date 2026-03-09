@@ -10,12 +10,8 @@
     <div class="ad-master-grid" *ngIf="advertisements.length > 0; else emptyState">
       <article class="ad-entry-card" *ngFor="let advertisement of advertisements">
         <div class="ad-entry-media">
-          <img
-            [src]="advertisement.image"
-            [alt]="advertisement.title"
-            class="ad-thumb"
-            [class.vertical]="advertisement.layout === 'vertical'"
-          />
+          <img [src]="advertisement.image" [alt]="advertisement.title" class="ad-thumb"
+            [class.vertical]="advertisement.layout === 'vertical'" />
         </div>
 
         <div class="ad-entry-main">
@@ -39,7 +35,8 @@
             <button class="admin-action-btn admin-btn-secondary" type="button" (click)="openEditModal(advertisement)">
               <i class="fa-solid fa-pen"></i>
             </button>
-            <button class="admin-action-btn admin-btn-danger" type="button" (click)="deleteAdvertisement(advertisement.id)">
+            <button class="admin-action-btn admin-btn-danger" type="button"
+              (click)="deleteAdvertisement(advertisement.id)">
               <i class="fa-solid fa-trash"></i>
             </button>
           </div>
@@ -54,6 +51,52 @@
     No advertisements added yet. Create one to show popup ads on the website.
   </div>
 </ng-template>
+
+<!-- <ng-template #emptyState>
+  <div class="table-responsive">
+    <table class="table align-middle mb-0 admin-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Offer Name</th>
+          <th>offer Image Url</th>
+          <th>Discount</th>
+          <th>isActive</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if(offerRes().length == 0){
+        <tr>
+          <td class="text-center" colspan="5">No Data Found</td>
+        </tr>
+        }@else {
+        @for(item of offerRes(); track $index){
+        <tr>
+          <td>{{$index + 1}}</td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="fw-semibold">{{ item.offerName ? item.offerName : '-' }}</div>
+            </div>
+          </td>
+          <td><img [src]="getPrimaryImageUrl(item.offerImageUrl)" [alt]="item.productShortName" class="ad-thumb" /></td>
+          <td class="text-primary">{{ item.offerPercentDiscount || '-' }}</td>
+
+          @if(item.isActive == true )
+          {
+          <td><span class="badge text-bg-success">Active</span></td>}
+          @else {
+          <td><span class="text-danger">Inactive </span> </td>
+          }
+       
+        </tr>
+        }
+        }
+
+
+      </tbody>
+    </table>
+  </div>
+</ng-template> -->
 
 <div class="modal fade admin-modal advertisement-modal" #advertisementModal tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable advertisement-modal-dialog">
@@ -71,11 +114,8 @@
                 <div class="row g-2">
                   <div class="col-12 col-md-6">
                     <label class="admin-form-label">Popup Type</label>
-                    <select
-                      class="form-select admin-form-select"
-                      formControlName="layout"
-                      [class.is-invalid]="showFieldError(form.controls.layout)"
-                    >
+                    <select class="form-select admin-form-select" formControlName="layout"
+                      [class.is-invalid]="showFieldError(form.controls.layout)">
                       <option value="horizontal">Horizontal</option>
                       <option value="vertical">Vertical</option>
                     </select>
@@ -91,13 +131,9 @@
 
                   <div class="col-12 col-md-6">
                     <label class="admin-form-label">Heading</label>
-                    <input
-                      class="form-control admin-form-control"
-                      formControlName="title"
-                      placeholder="Festival Sale 2026"
-                      [class.is-invalid]="showFieldError(form.controls.title)"
-                      (blur)="formatHeadingFromInput()"
-                    />
+                    <input class="form-control admin-form-control" formControlName="title"
+                      placeholder="Festival Sale 2026" [class.is-invalid]="showFieldError(form.controls.title)"
+                      (blur)="formatHeadingFromInput()" />
                     <small class="field-error text-danger" *ngIf="hasFieldError(form.controls.title, 'required')">
                       Heading is required.
                     </small>
@@ -108,13 +144,9 @@
 
                   <div class="col-12 col-md-6">
                     <label class="admin-form-label">Subtext</label>
-                    <textarea
-                      class="form-control admin-form-control"
-                      rows="1"
-                      formControlName="subtext"
+                    <textarea class="form-control admin-form-control" rows="1" formControlName="subtext"
                       placeholder="Limited-time offer details..."
-                      [class.is-invalid]="showFieldError(form.controls.subtext)"
-                    ></textarea>
+                      [class.is-invalid]="showFieldError(form.controls.subtext)"></textarea>
                     <small class="text-muted-small">Maximum 70 words.</small>
                     <small class="field-error text-danger" *ngIf="hasFieldError(form.controls.subtext, 'required')">
                       Subtext is required.
@@ -126,12 +158,8 @@
 
                   <div class="col-12 col-md-6">
                     <label class="admin-form-label">Start Date</label>
-                    <input
-                      class="form-control admin-form-control"
-                      type="date"
-                      formControlName="startDate"
-                      [class.is-invalid]="showFieldError(form.controls.startDate)"
-                    />
+                    <input class="form-control admin-form-control" type="date" formControlName="startDate"
+                      [class.is-invalid]="showFieldError(form.controls.startDate)" />
                     <small class="field-error text-danger" *ngIf="hasFieldError(form.controls.startDate, 'required')">
                       Start date is required.
                     </small>
@@ -139,13 +167,9 @@
 
                   <div class="col-12 col-md-6">
                     <label class="admin-form-label">End Date</label>
-                    <input
-                      class="form-control admin-form-control"
-                      type="date"
-                      formControlName="endDate"
+                    <input class="form-control admin-form-control" type="date" formControlName="endDate"
                       [min]="form.controls.startDate.value"
-                      [class.is-invalid]="showFieldError(form.controls.endDate)"
-                    />
+                      [class.is-invalid]="showFieldError(form.controls.endDate)" />
                     <small class="field-error text-danger" *ngIf="hasFieldError(form.controls.endDate, 'required')">
                       End date is required.
                     </small>
@@ -156,14 +180,9 @@
 
                   <div class="col-12 col-md-6">
                     <label class="admin-form-label">Upload Image</label>
-                    <input
-                      #imageInput
-                      class="form-control admin-form-control"
-                      type="file"
-                      accept="image/*"
+                    <input #imageInput class="form-control admin-form-control" type="file" accept="image/*"
                       (change)="onImageSelected($event)"
-                      [class.is-invalid]="hasFieldError(form.controls.image, 'required')"
-                    />
+                      [class.is-invalid]="hasFieldError(form.controls.image, 'required')" />
                     <div class="upload-guidance text-muted-small">
                       <div>1. Horizontal: 1200 x 700 px</div>
                       <div>2. Vertical: 900 x 1200 px</div>
@@ -185,12 +204,8 @@
 
                   <div class="col-12 col-md-6">
                     <label class="admin-form-label">Image Source</label>
-                    <input
-                      class="form-control admin-form-control"
-                      formControlName="image"
-                      placeholder="https://..."
-                      [class.is-invalid]="hasFieldError(form.controls.image, 'required')"
-                    />
+                    <input class="form-control admin-form-control" formControlName="image" placeholder="https://..."
+                      [class.is-invalid]="hasFieldError(form.controls.image, 'required')" />
                   </div>
                 </div>
               </div>
@@ -200,17 +215,16 @@
               <div class="ad-preview-panel">
                 <div class="preview-panel-head">
                   <h6 class="mb-0">Live Preview</h6>
-                  <span class="badge text-bg-light">{{ (form.controls.layout.value || 'horizontal') | titlecase }}</span>
+                  <span class="badge text-bg-light">{{ (form.controls.layout.value || 'horizontal') | titlecase
+                    }}</span>
                 </div>
 
                 <div class="preview-canvas">
                   <article class="ad-preview-card" [class.vertical]="form.controls.layout.value === 'vertical'">
                     <div class="ad-preview-image-wrap">
-                      <img
-                        *ngIf="form.controls.image.value; else previewImageFallback"
+                      <img *ngIf="form.controls.image.value; else previewImageFallback"
                         [src]="form.controls.image.value"
-                        [alt]="form.controls.title.value || 'Advertisement preview'"
-                      />
+                        [alt]="form.controls.title.value || 'Advertisement preview'" />
                       <ng-template #previewImageFallback>
                         <div class="ad-image-fallback">
                           <i class="fa-regular fa-image"></i>
@@ -227,7 +241,8 @@
                         {{ form.controls.subtext.value || 'Subtext will appear here while typing in the form.' }}
                       </p>
                       <small class="text-muted-small">
-                        {{ form.controls.startDate.value || 'Start date' }} to {{ form.controls.endDate.value || 'End date' }}
+                        {{ form.controls.startDate.value || 'Start date' }} to {{ form.controls.endDate.value || 'End
+                        date' }}
                       </small>
                     </div>
                   </article>
@@ -246,10 +261,5 @@
   </div>
 </div>
 
-<app-delete-confirm-modal
-  [isOpen]="isDeleteConfirmOpen"
-  title="Delete Advertisement"
-  message="Delete this record?"
-  (cancelled)="cancelDeleteAdvertisement()"
-  (confirmed)="confirmDeleteAdvertisement()"
-></app-delete-confirm-modal>
+<app-delete-confirm-modal [isOpen]="isDeleteConfirmOpen" title="Delete Advertisement" message="Delete this record?"
+  (cancelled)="cancelDeleteAdvertisement()" (confirmed)="confirmDeleteAdvertisement()"></app-delete-confirm-modal>
